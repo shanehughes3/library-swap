@@ -1,0 +1,35 @@
+extends layout.pug
+block title
+	title Login
+block content
+	h1 Login
+	form(
+		action="/login"
+		method="post"
+		onsubmit="return verifyLoginSubmit()"
+	)
+		div
+			label Username:
+			input(
+				class="input-field"
+				type="text"
+				name="username"
+				id="username-field"
+				autofocus
+			)
+		div
+			label Password:
+			input(
+				class="input-field"
+				type="password"
+				name="password"
+				id="password-field"
+			)
+		div
+			input(
+				type="submit"
+				value="Log In"
+				class="button"
+			)
+		div(id="message")
+			| #{message}
