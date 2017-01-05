@@ -27,8 +27,8 @@ passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+app.use(express.static(__dirname + "/public"));
 app.set("view engine", "pug");
-
 app.use(router);
 
 app.listen(config.port);

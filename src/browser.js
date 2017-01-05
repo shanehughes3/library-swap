@@ -1,9 +1,18 @@
 "use strict"
 
-function verifyLoginSubmit() {
-    return true;
+import React from "react";
+import ReactDOM from "react-dom";
+import {Index} from "./index.jsx";
+
+const apps = {
+    "home-app": Index
+};
+
+function renderApp(element) {
+    const App = apps[element.id];
+
+    ReactDOM.render(<App />, element);
 }
 
-function verifyRegisterSubmit() {
-    return true;
-}
+document.querySelectorAll(".__react-root")
+        .forEach(renderApp);

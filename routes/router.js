@@ -2,6 +2,10 @@ const router = require("express").Router(),
       passport = require("passport"),
       db = require("../db/db");
 
+router.get("/", function(req, res) {
+    res.render("index");
+});
+
 router.get("/login", function(req, res) {
     res.render("login");
 });
