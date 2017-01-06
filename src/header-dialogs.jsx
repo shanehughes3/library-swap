@@ -1,4 +1,5 @@
 import React from "react";
+import {Textfield, Button, IconButton} from "react-mdl";
 
 export class LoginDialog extends React.Component {
     constructor() {
@@ -19,24 +20,29 @@ export class LoginDialog extends React.Component {
     render() {
         return (
             <div className="header-dialog">
-                <div className="header-dialog-close"
-                     onClick={this.props.closeDialog}>&times;</div>
+                <IconButton
+                    name="close"
+                    onClick={this.props.closeDialog}
+                    className="header-dialog-close" />
                 <form action="javascript:void(0)" method="post">
                     <div>
-                        <input className="input-field" type="text"
-                               name="username" id="username-field"
-                               placeholder="Username" autoFocus
-                               onChange={this.handleChange} />
+                        <Textfield
+                            onChange={this.handleChange}
+                            label="Username"
+                            id="username-field" />
                     </div>
                     <div>
-                        <input className="input-field" type="text"
-                               name="password" id="password-field"
-                               placeholder="Password"
-                               onChange={this.handleChange} />
+                        <Textfield
+                            onChange={this.handleChange}
+                            label="Password"
+                            type="password"
+                            id="password-field" />
                     </div>
                     <div>
-                        <input className="button" type="submit"
-                               value="Log In" onClick={this.onSubmit} />
+                        <Button
+                            onClick={this.onSubmit}
+                            raised colored ripple>
+                            Log In</Button>
                     </div>
                 </form>
             </div>
@@ -64,30 +70,36 @@ export class RegisterDialog extends React.Component {
     render() {
         return (
             <div className="header-dialog">
-                <div className="header-dialog-close"
-                     onClick={this.props.closeDialog}>&times;</div>
+                <IconButton
+                    name="close"
+                    onClick={this.props.closeDialog}
+                    className="header-dialog-close" />
                 <form action="javascript:void(0)" method="post">
                     <div>
-                        <input className="input-field" type="text"
-                               name="username" id="username-field"
-                               placeholder="Username" autoFocus
-                               onChange={this.handleChange} />
+                        <Textfield
+                            onChange={this.handleChange}
+                            label="Username"
+                            id="username-field" />
                     </div>
                     <div>
-                        <input className="input-field" type="text"
-                               name="password" id="password-field"
-                               placeholder="Password"
-                               onChange={this.handleChange} />
+                        <Textfield
+                            onChange={this.handleChange}
+                            label="Password"
+                            id="password-field"
+                            type="password" />
                     </div>
                     <div>
-                        <input className="input-field" type="text"
-                               name="confirm" id="confirm-field"
-                               placeholder="Confirm Password"
-                               onChange={this.handleChange} />
+                        <Textfield
+                            onChange={this.handleChange}
+                            label="Confirm Password"
+                            id="confirm-field"
+                            type="password" />
                     </div>
                     <div>
-                        <input className="button" type="submit"
-                               value="Register" onClick={this.onSubmit} />
+                        <Button
+                            onClick={this.onSubmit}
+                            raised colored ripple>
+                            Register</Button>
                     </div>
                 </form>
             </div>

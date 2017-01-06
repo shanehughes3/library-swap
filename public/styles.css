@@ -10,6 +10,7 @@ a {
     position: relative;
     border-bottom: 10px solid #ff1f37;
     padding-bottom: 5px;
+    margin-top: 5px;
 }
 #logo-img {
     height: 50px;
@@ -24,7 +25,8 @@ a {
     font-size: 30px;
     margin-left: 20px;
     margin-right: 20px;
-    vertical-align: text-bottom;
+    margin-top: 20px;
+    cursor: pointer;
 }
 .header-dialog {
     padding: 20px;
@@ -39,8 +41,8 @@ a {
 .header-dialog-close {
     font-size: 2em;
     position: absolute;
-    right: 4px;
-    top: -14px;
+    right: 5px;
+    top: 5px;
     cursor: pointer;
     z-index: 15;
 }
