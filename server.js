@@ -13,7 +13,7 @@ const express = require("express"),
 app.use(scribe({
     removeIPv4Prefix: true
 }));
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(session({
     secret: config.secret,

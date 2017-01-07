@@ -26911,7 +26911,9 @@ var LoginDialog = exports.LoginDialog = function (_React$Component) {
 
         _this.state = {
             username: "",
-            password: ""
+            password: "",
+            message: "",
+            loading: false
         };
         _this.onSubmit = _this.onSubmit.bind(_this);
         _this.handleChange = _this.handleChange.bind(_this);
@@ -26920,7 +26922,46 @@ var LoginDialog = exports.LoginDialog = function (_React$Component) {
 
     _createClass(LoginDialog, [{
         key: "onSubmit",
-        value: function onSubmit() {}
+        value: function onSubmit() {
+            var _this2 = this;
+
+            this.setState({
+                message: "",
+                loading: true
+            });
+            if (this.state.username && this.state.password) {
+                var payload = {
+                    username: this.state.username,
+                    password: this.state.password
+                };
+                sendPost("/login", payload, function (err, data) {
+                    if (err) {
+                        _this2.setState({
+                            message: "An unknown error occurred",
+                            loading: false
+                        });
+                    } else {
+                        if (data.error) {
+                            _this2.setState({
+                                message: data.error,
+                                loading: false,
+                                password: ""
+                            });
+                        } else {
+                            _this2.setState({
+                                loading: false
+                            });
+                            console.log("Success: ", data);
+                        }
+                    }
+                });
+            } else {
+                this.setState({
+                    message: "Please complete all fields",
+                    loading: false
+                });
+            }
+        }
     }, {
         key: "handleChange",
         value: function handleChange(e) {
@@ -26929,6 +26970,18 @@ var LoginDialog = exports.LoginDialog = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            var message = void 0,
+                spinner = void 0;
+            if (this.state.message) {
+                message = _react2.default.createElement(
+                    "span",
+                    { className: "dialog-message" },
+                    this.state.message
+                );
+            }
+            if (this.state.loading) {
+                spinner = _react2.default.createElement(_reactMdl.Spinner, { singleColor: true });
+            }
             return _react2.default.createElement(
                 "div",
                 { className: "header-dialog" },
@@ -26945,7 +26998,10 @@ var LoginDialog = exports.LoginDialog = function (_React$Component) {
                         _react2.default.createElement(_reactMdl.Textfield, {
                             onChange: this.handleChange,
                             label: "Username",
-                            id: "username-field" })
+                            id: "username-field",
+                            name: "username",
+                            value: this.state.username,
+                            autoFocus: true })
                     ),
                     _react2.default.createElement(
                         "div",
@@ -26954,7 +27010,9 @@ var LoginDialog = exports.LoginDialog = function (_React$Component) {
                             onChange: this.handleChange,
                             label: "Password",
                             type: "password",
-                            id: "password-field" })
+                            id: "password-field",
+                            name: "password",
+                            value: this.state.password })
                     ),
                     _react2.default.createElement(
                         "div",
@@ -26967,7 +27025,9 @@ var LoginDialog = exports.LoginDialog = function (_React$Component) {
                             "Log In"
                         )
                     )
-                )
+                ),
+                spinner,
+                message
             );
         }
     }]);
@@ -26981,29 +27041,102 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
     function RegisterDialog() {
         _classCallCheck(this, RegisterDialog);
 
-        var _this2 = _possibleConstructorReturn(this, (RegisterDialog.__proto__ || Object.getPrototypeOf(RegisterDialog)).call(this));
+        var _this3 = _possibleConstructorReturn(this, (RegisterDialog.__proto__ || Object.getPrototypeOf(RegisterDialog)).call(this));
 
-        _this2.state = {
+        _this3.state = {
             username: "",
             password: "",
-            confirm: ""
+            confirm: "",
+            message: "",
+            loading: false
         };
-        _this2.handleChange = _this2.handleChange.bind(_this2);
-        _this2.onSubmit = _this2.onSubmit.bind(_this2);
-        return _this2;
+        _this3.handleChange = _this3.handleChange.bind(_this3);
+        _this3.onSubmit = _this3.onSubmit.bind(_this3);
+        return _this3;
     }
 
     _createClass(RegisterDialog, [{
+        key: "onSubmit",
+        value: function onSubmit() {
+            var _this4 = this;
+
+            this.setState({
+                message: "",
+                loading: true
+            });
+            if (this.checkFields()) {
+                var payload = {
+                    username: this.state.username,
+                    password: this.state.password
+                };
+                sendPost("/register", payload, function (err, data) {
+                    if (err) {
+                        _this4.setState({
+                            message: "An unknown error occurred",
+                            loading: false
+                        });
+                        console.log(err);
+                    } else {
+                        if (data.error) {
+                            _this4.setState({
+                                loading: false
+                            });
+                            console.log(data.error);
+                        } else {
+                            _this4.setState({
+                                loading: false
+                            });
+                            console.log("Success: ", data);
+                        }
+                    }
+                });
+            }
+        }
+    }, {
+        key: "checkFields",
+        value: function checkFields() {
+            if (!this.state.username || !this.state.password || !this.state.confirm) {
+                this.setState({
+                    message: "Please complete all fields",
+                    loading: false
+                });
+                return false;
+            } else if (this.state.password !== this.state.confirm) {
+                this.setState({
+                    message: "Password and confirmation do not match",
+                    loading: false
+                });
+                return false;
+            } else if (this.state.password.length < 8) {
+                this.setState({
+                    message: "Password must be at least 8 characters",
+                    loading: false
+                });
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }, {
         key: "handleChange",
         value: function handleChange(e) {
             this.setState(_defineProperty({}, e.target.name, e.target.value));
         }
     }, {
-        key: "onSubmit",
-        value: function onSubmit() {}
-    }, {
         key: "render",
         value: function render() {
+            var message = void 0,
+                spinner = void 0;
+            if (this.state.message) {
+                message = _react2.default.createElement(
+                    "span",
+                    { className: "dialog-message" },
+                    this.state.message
+                );
+            }
+            if (this.state.loading) {
+                spinner = _react2.default.createElement(_reactMdl.Spinner, { singleColor: true });
+            }
             return _react2.default.createElement(
                 "div",
                 { className: "header-dialog" },
@@ -27020,7 +27153,10 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
                         _react2.default.createElement(_reactMdl.Textfield, {
                             onChange: this.handleChange,
                             label: "Username",
-                            id: "username-field" })
+                            id: "username-field",
+                            name: "username",
+                            value: this.state.username,
+                            autoFocus: true })
                     ),
                     _react2.default.createElement(
                         "div",
@@ -27029,7 +27165,9 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
                             onChange: this.handleChange,
                             label: "Password",
                             id: "password-field",
-                            type: "password" })
+                            type: "password",
+                            name: "password",
+                            value: this.state.password })
                     ),
                     _react2.default.createElement(
                         "div",
@@ -27038,7 +27176,9 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
                             onChange: this.handleChange,
                             label: "Confirm Password",
                             id: "confirm-field",
-                            type: "password" })
+                            type: "password",
+                            name: "confirm",
+                            value: this.state.confirm })
                     ),
                     _react2.default.createElement(
                         "div",
@@ -27051,13 +27191,38 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
                             "Register"
                         )
                     )
-                )
+                ),
+                spinner,
+                message
             );
         }
     }]);
 
     return RegisterDialog;
 }(_react2.default.Component);
+
+function sendPost(path, payload, cb) {
+    var xhr = new XMLHttpRequest();
+    var outForm = "";
+    for (var key in payload) {
+        if (outForm) {
+            outForm += "&";
+        }
+        outForm += encodeURIComponent(key) + "=" + encodeURIComponent(payload[key]);
+    }
+    xhr.addEventListener("load", function () {
+        return cb(null, JSON.parse(xhr.responseText));
+    });
+    xhr.addEventListener("error", function (e) {
+        return cb(e);
+    });
+    xhr.addEventListener("abort", function () {
+        return cb({ error: "abort" });
+    });
+    xhr.open("POST", path);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(outForm);
+}
 
 },{"react":242,"react-mdl":211}],245:[function(require,module,exports){
 "use strict";
@@ -27115,10 +27280,15 @@ var Header = exports.Header = function (_React$Component) {
 												this.setState({ dialog: "" });
 								}
 				}, {
+								key: "profileClick",
+								value: function profileClick() {}
+				}, {
 								key: "render",
 								value: function render() {
+												console.log(window.user);
 												var buttons = "";
-												if (this.state.loggedIn == false) {
+												//	if (this.state.loggedIn == false) {
+												if (!window.user) {
 																buttons = _react2.default.createElement(
 																				"span",
 																				null,
@@ -27128,6 +27298,14 @@ var Header = exports.Header = function (_React$Component) {
 																				_react2.default.createElement(HeaderButton, {
 																								text: "Log In",
 																								onClick: this.openDialog })
+																);
+												} else {
+																buttons = _react2.default.createElement(
+																				"span",
+																				null,
+																				_react2.default.createElement(HeaderButton, {
+																								text: user.username,
+																								onClick: this.profileClick })
 																);
 												}
 

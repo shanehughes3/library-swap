@@ -3,34 +3,47 @@ const router = require("express").Router(),
       db = require("../db/db");
 
 router.get("/", function(req, res) {
-    res.render("index");
+    console.log(req.user);
+    if (req.user) {
+        res.render("index", {user: req.user.username});
+    } else {
+        res.render("index");
+    }
 });
 
-router.get("/login", function(req, res) {
-    res.render("login");
+router.post("/login", function(req, res, next) {
+    console.log(req.body);
+    passport.authenticate("local", function(err, user, info) {
+        if (err) {
+            res.status(500).json({error: err});
+        } else if (!user) {
+            res.status(401).json({error: info.message});
+        } else {
+            req.login(user, function(err) {
+                if (err) {
+                    res.json(err);
+                } else {
+                    res.json(user);
+                }
+            });
+        }
+    })(req, res, next);
 });
-
-router.post("/login", passport.authenticate("local", {failWithError: true}),
-	    loginSuccess, loginFailure);
     
 function loginSuccess(req, res) {
-    res.end("success");
+    res.json({user: req.user.username});
 }
 
 function loginFailure(err, req, res) {
-    res.render("login");
+    res.json({error: err});
 }
-
-router.get("/register", function(req, res) {
-    res.render("register");
-});
 
 router.post("/register", function(req, res) {
     db.register(req.body.username, req.body.password, function(err, user) {
 	if (err) {
-	    res.end(err);
+	    res.json({error: err});
 	} else {
-	    res.end(`Success: ${user}`);
+	    res.json({user: user});
 	}
     });
 });

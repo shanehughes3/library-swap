@@ -10,6 +10,10 @@ const db = new Sequelize("library_swap", config.dbUser, config.dbPass, {
 
 const User = passportLocalSequelize.defineUser(db, {});
 
+passportLocalSequelize.attachToUser(User, {
+    keylen: 125   // fixes passport-local-sequelize bug (issue #21)
+});
+
 User.sync();
 
 exports.user = User;

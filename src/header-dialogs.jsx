@@ -1,23 +1,73 @@
 import React from "react";
-import {Textfield, Button, IconButton} from "react-mdl";
+import {Textfield, Button, IconButton, Spinner} from "react-mdl";
 
 export class LoginDialog extends React.Component {
     constructor() {
         super();
         this.state = {
             username: "",
-            password: ""
+            password: "",
+            message: "",
+            loading: false
         };
         this.onSubmit = this.onSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     onSubmit() {
-        
+        this.setState({
+            message: "",
+            loading: true
+        });
+        if (this.state.username && this.state.password) {
+            const payload = {
+                username: this.state.username,
+                password: this.state.password
+            };
+            sendPost("/login", payload, (err, data) => {
+                if (err) {
+                    this.setState({
+                        message: "An unknown error occurred",
+                        loading: false
+                    });
+                } else {
+                    if (data.error) {
+                        this.setState({
+                            message: data.error,
+                            loading: false,
+                            password: ""
+                        });
+                    } else {
+                        this.setState({
+                            loading: false
+                        });
+                        console.log("Success: ", data)
+                    }
+                }
+            });
+        } else {
+            this.setState({
+                message: "Please complete all fields",
+                loading: false
+            });
+        }
     }
     handleChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
     render() {
+        let message, spinner;
+        if (this.state.message) {
+            message = (
+                <span className="dialog-message">
+                    {this.state.message}
+                </span>
+            );
+        }
+        if (this.state.loading) {
+            spinner = (
+                <Spinner singleColor />
+            );
+        }
         return (
             <div className="header-dialog">
                 <IconButton
@@ -29,14 +79,19 @@ export class LoginDialog extends React.Component {
                         <Textfield
                             onChange={this.handleChange}
                             label="Username"
-                            id="username-field" />
+                            id="username-field"
+                            name="username"
+                            value={this.state.username}
+                            autoFocus />
                     </div>
                     <div>
                         <Textfield
                             onChange={this.handleChange}
                             label="Password"
                             type="password"
-                            id="password-field" />
+                            id="password-field"
+                            name="password"
+                            value={this.state.password} />
                     </div>
                     <div>
                         <Button
@@ -45,6 +100,8 @@ export class LoginDialog extends React.Component {
                             Log In</Button>
                     </div>
                 </form>
+                {spinner}
+                {message}
             </div>
         );
     }
@@ -56,18 +113,91 @@ export class RegisterDialog extends React.Component {
         this.state = {
             username: "",
             password: "",
-            confirm: ""
+            confirm: "",
+            message: "",
+            loading: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
+    
+    onSubmit() {
+        this.setState({
+            message: "",
+            loading: true
+        });
+        if (this.checkFields()) {
+            const payload = {
+                username: this.state.username,
+                password: this.state.password
+            };
+            sendPost("/register", payload, (err, data) => {
+                if (err) {
+                    this.setState({
+                        message: "An unknown error occurred",
+                        loading: false
+                    });
+                    console.log(err);
+                } else {
+                    if (data.error) {
+                        this.setState({
+                            loading: false
+                        });
+                        console.log(data.error);
+                    } else {
+                        this.setState({
+                            loading: false
+                        });
+                        console.log("Success: ", data);
+                    }
+                }
+            });
+        }
+    }
+    
+    checkFields() {
+        if (!this.state.username || !this.state.password ||
+            !this.state.confirm) {
+            this.setState({
+                message: "Please complete all fields",
+                loading: false
+            });
+            return false;
+        } else if (this.state.password !== this.state.confirm) {
+            this.setState({
+                message: "Password and confirmation do not match",
+                loading: false
+            });
+            return false;
+        } else if (this.state.password.length < 8) {
+            this.setState({
+                message: "Password must be at least 8 characters",
+                loading: false
+            });
+            return false;
+        } else {
+            return true;
+        }
+    }
+    
     handleChange(e) {
         this.setState({ [e.target.name]: e.target.value });
     }
-    onSubmit() {
-        
-    }
+    
     render() {
+        let message, spinner;
+        if (this.state.message) {
+            message = (
+                <span className="dialog-message">
+                    {this.state.message}
+                </span>
+            );
+        }
+        if (this.state.loading) {
+            spinner = (
+                <Spinner singleColor />
+            );
+        }
         return (
             <div className="header-dialog">
                 <IconButton
@@ -79,21 +209,28 @@ export class RegisterDialog extends React.Component {
                         <Textfield
                             onChange={this.handleChange}
                             label="Username"
-                            id="username-field" />
+                            id="username-field"
+                            name="username"
+                            value={this.state.username}
+                            autoFocus />
                     </div>
                     <div>
                         <Textfield
                             onChange={this.handleChange}
                             label="Password"
                             id="password-field"
-                            type="password" />
+                            type="password"
+                            name="password"
+                            value={this.state.password} />
                     </div>
                     <div>
                         <Textfield
                             onChange={this.handleChange}
                             label="Confirm Password"
                             id="confirm-field"
-                            type="password" />
+                            type="password"
+                            name="confirm"
+                            value={this.state.confirm} />
                     </div>
                     <div>
                         <Button
@@ -102,8 +239,27 @@ export class RegisterDialog extends React.Component {
                             Register</Button>
                     </div>
                 </form>
+                {spinner}
+                {message}
             </div>
         );
     }
 }
 
+function sendPost(path, payload, cb) {
+    const xhr = new XMLHttpRequest();
+    let outForm = "";
+    for (let key in payload) {
+        if (outForm) {
+            outForm += "&"
+        }
+        outForm +=
+            `${encodeURIComponent(key)}=${encodeURIComponent(payload[key])}`;
+    }
+    xhr.addEventListener("load", () => cb(null, JSON.parse(xhr.responseText)));
+    xhr.addEventListener("error", (e) => cb(e));
+    xhr.addEventListener("abort", () => cb({error: "abort"}));
+    xhr.open("POST", path);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xhr.send(outForm);
+}

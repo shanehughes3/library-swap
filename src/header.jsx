@@ -23,10 +23,16 @@ export class Header extends React.Component {
     closeDialog() {
         this.setState({dialog: ""});
     }
+
+    profileClick() {
+
+    }
     
     render() {
+        console.log(window.user);
 	let buttons = "";
-	if (this.state.loggedIn == false) {
+        //	if (this.state.loggedIn == false) {
+        if (!window.user) {
 	    buttons = (
                 <span>
 		    <HeaderButton
@@ -37,7 +43,15 @@ export class Header extends React.Component {
 		        onClick={this.openDialog} />
                 </span>
 	    );
-	}
+	} else {
+            buttons = (
+                <span>
+                    <HeaderButton
+                        text={user.username}
+                        onClick={this.profileClick} />
+                </span>
+            );
+        }
 
 	// TODO - push logic to child class?
 	let dialog;
