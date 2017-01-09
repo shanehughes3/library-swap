@@ -3,7 +3,6 @@ const router = require("express").Router(),
       db = require("../db/db");
 
 router.get("/", function(req, res) {
-    console.log(req.user);
     if (req.user) {
         res.render("index", {user: req.user.username});
     } else {
@@ -12,7 +11,6 @@ router.get("/", function(req, res) {
 });
 
 router.post("/login", function(req, res, next) {
-    console.log(req.body);
     passport.authenticate("local", function(err, user, info) {
         if (err) {
             res.status(500).json({error: err});
@@ -23,7 +21,7 @@ router.post("/login", function(req, res, next) {
                 if (err) {
                     res.json(err);
                 } else {
-                    res.json(user);
+                    res.json({username: user.username});
                 }
             });
         }
@@ -43,9 +41,20 @@ router.post("/register", function(req, res) {
 	if (err) {
 	    res.json({error: err});
 	} else {
-	    res.json({user: user});
+            req.login(user, function(err) {
+                if (err) {
+                    res.json({error: err});
+                } else {
+                    res.json({username: user.username});
+                }
+            });
 	}
     });
+});
+
+router.get("/logout", function(req, res) {
+    req.logout();
+    res.redirect("/");
 });
 
 module.exports = router;

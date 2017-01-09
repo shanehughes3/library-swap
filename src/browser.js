@@ -11,7 +11,7 @@ const apps = {
 function renderApp(element) {
     const App = apps[element.id];
 
-    ReactDOM.render(<App />, element);
+    ReactDOM.render(<App user={window.user} />, element);
 }
 
 document.querySelectorAll(".__react-root")

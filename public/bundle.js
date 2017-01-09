@@ -26870,7 +26870,7 @@ var apps = {
 function renderApp(element) {
     var App = apps[element.id];
 
-    _reactDom2.default.render(_react2.default.createElement(App, null), element);
+    _reactDom2.default.render(_react2.default.createElement(App, { user: window.user }), element);
 }
 
 document.querySelectorAll(".__react-root").forEach(renderApp);
@@ -26949,9 +26949,10 @@ var LoginDialog = exports.LoginDialog = function (_React$Component) {
                             });
                         } else {
                             _this2.setState({
-                                loading: false
+                                loading: false,
+                                message: "Success!"
                             });
-                            console.log("Success: ", data);
+                            window.location.reload(true);
                         }
                     }
                 });
@@ -27084,9 +27085,10 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
                             console.log(data.error);
                         } else {
                             _this4.setState({
-                                loading: false
+                                loading: false,
+                                message: "Success!"
                             });
-                            console.log("Success: ", data);
+                            window.location.reload(true);
                         }
                     }
                 });
@@ -27228,7 +27230,7 @@ function sendPost(path, payload, cb) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-				value: true
+    value: true
 });
 exports.Header = undefined;
 
@@ -27240,6 +27242,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _headerDialogs = require("./header-dialogs.jsx");
 
+var _reactMdl = require("react-mdl");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27249,116 +27253,136 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Header = exports.Header = function (_React$Component) {
-				_inherits(Header, _React$Component);
+    _inherits(Header, _React$Component);
 
-				function Header() {
-								_classCallCheck(this, Header);
+    function Header() {
+        _classCallCheck(this, Header);
 
-								var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this));
+        var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this));
 
-								_this.state = {
-												dialog: "",
-												loggedIn: false // TODO must pass up
-								};
-								_this.openDialog = _this.openDialog.bind(_this);
-								_this.closeDialog = _this.closeDialog.bind(_this);
-								return _this;
-				}
+        _this.state = {
+            dialog: ""
+        };
+        _this.openDialog = _this.openDialog.bind(_this);
+        _this.closeDialog = _this.closeDialog.bind(_this);
+        return _this;
+    }
 
-				_createClass(Header, [{
-								key: "openDialog",
-								value: function openDialog(dialog) {
-												if (this.state.dialog === dialog) {
-																this.closeDialog();
-												} else {
-																this.setState({ dialog: dialog });
-												}
-								}
-				}, {
-								key: "closeDialog",
-								value: function closeDialog() {
-												this.setState({ dialog: "" });
-								}
-				}, {
-								key: "profileClick",
-								value: function profileClick() {}
-				}, {
-								key: "render",
-								value: function render() {
-												console.log(window.user);
-												var buttons = "";
-												//	if (this.state.loggedIn == false) {
-												if (!window.user) {
-																buttons = _react2.default.createElement(
-																				"span",
-																				null,
-																				_react2.default.createElement(HeaderButton, {
-																								text: "Register",
-																								onClick: this.openDialog }),
-																				_react2.default.createElement(HeaderButton, {
-																								text: "Log In",
-																								onClick: this.openDialog })
-																);
-												} else {
-																buttons = _react2.default.createElement(
-																				"span",
-																				null,
-																				_react2.default.createElement(HeaderButton, {
-																								text: user.username,
-																								onClick: this.profileClick })
-																);
-												}
+    _createClass(Header, [{
+        key: "openDialog",
+        value: function openDialog(dialog) {
+            if (this.state.dialog === dialog) {
+                this.closeDialog();
+            } else {
+                this.setState({ dialog: dialog });
+            }
+        }
+    }, {
+        key: "closeDialog",
+        value: function closeDialog() {
+            this.setState({ dialog: "" });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var buttons = "";
+            if (this.props.user) {
 
-												// TODO - push logic to child class?
-												var dialog = void 0;
-												if (this.state.dialog == "Log In") {
-																dialog = _react2.default.createElement(_headerDialogs.LoginDialog, { closeDialog: this.closeDialog });
-												} else if (this.state.dialog == "Register") {
-																dialog = _react2.default.createElement(_headerDialogs.RegisterDialog, { closeDialog: this.closeDialog });
-												}
+                buttons = _react2.default.createElement(
+                    "span",
+                    { style: { position: "relative" } },
+                    _react2.default.createElement(
+                        "span",
+                        { id: "user-menu", className: "header-button" },
+                        this.props.user
+                    ),
+                    _react2.default.createElement(
+                        _reactMdl.Menu,
+                        { target: "user-menu", align: "right", ripple: true },
+                        _react2.default.createElement(
+                            _reactMdl.MenuItem,
+                            null,
+                            "Inbox"
+                        ),
+                        _react2.default.createElement(
+                            _reactMdl.MenuItem,
+                            null,
+                            "Profile"
+                        ),
+                        _react2.default.createElement(
+                            "a",
+                            { href: "/logout" },
+                            _react2.default.createElement(
+                                _reactMdl.MenuItem,
+                                null,
+                                "Log Out"
+                            )
+                        )
+                    )
+                );
+            } else {
+                buttons = _react2.default.createElement(
+                    "span",
+                    null,
+                    _react2.default.createElement(HeaderButton, {
+                        text: "Register",
+                        onClick: this.openDialog }),
+                    _react2.default.createElement(HeaderButton, {
+                        text: "Log In",
+                        onClick: this.openDialog })
+                );
+            }
 
-												return _react2.default.createElement(
-																"div",
-																{ id: "top-bar" },
-																_react2.default.createElement(
-																				"a",
-																				{ href: "/" },
-																				_react2.default.createElement(
-																								"span",
-																								{ id: "name-and-logo" },
-																								_react2.default.createElement(
-																												"span",
-																												{ id: "logo" },
-																												_react2.default.createElement("img", { src: "/logo.svg", id: "logo-img" })
-																								),
-																								_react2.default.createElement(
-																												"span",
-																												{ id: "site-name" },
-																												"Library Swap"
-																								)
-																				)
-																),
-																buttons,
-																dialog
-												);
-								}
-				}]);
+            // TODO - push logic to child class?
+            var dialog = void 0;
+            if (this.state.dialog == "Log In") {
+                dialog = _react2.default.createElement(_headerDialogs.LoginDialog, { closeDialog: this.closeDialog });
+            } else if (this.state.dialog == "Register") {
+                dialog = _react2.default.createElement(_headerDialogs.RegisterDialog, { closeDialog: this.closeDialog });
+            }
 
-				return Header;
+            return _react2.default.createElement(
+                "div",
+                { id: "top-bar" },
+                _react2.default.createElement(
+                    "a",
+                    { href: "/" },
+                    _react2.default.createElement(
+                        "span",
+                        { id: "name-and-logo" },
+                        _react2.default.createElement(
+                            "span",
+                            { id: "logo" },
+                            _react2.default.createElement("img", { src: "/logo.svg", id: "logo-img" })
+                        ),
+                        _react2.default.createElement(
+                            "span",
+                            { id: "site-name" },
+                            "Library Swap"
+                        )
+                    )
+                ),
+                buttons,
+                dialog
+            );
+        }
+    }]);
+
+    return Header;
 }(_react2.default.Component);
 
 function HeaderButton(props) {
-				return _react2.default.createElement(
-								"span",
-								{ className: "header-button",
-												onClick: function onClick() {
-																return props.onClick(props.text);
-												} },
-								props.text
-				);
+    return _react2.default.createElement(
+        "span",
+        { className: "header-button",
+            onClick: function onClick() {
+                return props.onClick(props.text);
+            } },
+        props.text
+    );
 }
 
-},{"./header-dialogs.jsx":244,"react":242}],246:[function(require,module,exports){
+},{"./header-dialogs.jsx":244,"react":242,"react-mdl":211}],246:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27397,7 +27421,8 @@ var Index = exports.Index = function (_React$Component) {
             return _react2.default.createElement(
                 "div",
                 null,
-                _react2.default.createElement(_header.Header, null)
+                _react2.default.createElement(_header.Header, {
+                    user: this.props.user })
             );
         }
     }]);

@@ -8,7 +8,8 @@ export class Index extends React.Component {
     render() {
         return (
             <div>
-                <Header />
+                <Header
+                    user={this.props.user} />
             </div>
         );
     }

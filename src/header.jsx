@@ -1,17 +1,17 @@
 import React from "react";
 import {LoginDialog, RegisterDialog} from "./header-dialogs.jsx";
+import {Menu, MenuItem} from "react-mdl";
 
 export class Header extends React.Component {
     constructor() {
 	super();
 	this.state = {
 	    dialog: "",
-	    loggedIn: false // TODO must pass up
 	};
 	this.openDialog = this.openDialog.bind(this);
         this.closeDialog = this.closeDialog.bind(this);
     }
-    
+
     openDialog(dialog) {
         if (this.state.dialog === dialog) {
             this.closeDialog();
@@ -24,15 +24,25 @@ export class Header extends React.Component {
         this.setState({dialog: ""});
     }
 
-    profileClick() {
-
-    }
-    
     render() {
-        console.log(window.user);
 	let buttons = "";
-        //	if (this.state.loggedIn == false) {
-        if (!window.user) {
+        if (this.props.user) {
+            
+            buttons = (
+                <span style={{position: "relative"}}>
+                    <span id="user-menu" className="header-button">
+                        {this.props.user}
+                    </span>
+                    <Menu target="user-menu" align="right" ripple>
+                        <MenuItem>Inbox</MenuItem>
+                        <MenuItem>Profile</MenuItem>
+                        <a href="/logout">
+                            <MenuItem>Log Out</MenuItem>
+                        </a>
+                    </Menu>
+                </span>
+            );
+        } else {
 	    buttons = (
                 <span>
 		    <HeaderButton
@@ -43,15 +53,7 @@ export class Header extends React.Component {
 		        onClick={this.openDialog} />
                 </span>
 	    );
-	} else {
-            buttons = (
-                <span>
-                    <HeaderButton
-                        text={user.username}
-                        onClick={this.profileClick} />
-                </span>
-            );
-        }
+	} 
 
 	// TODO - push logic to child class?
 	let dialog;

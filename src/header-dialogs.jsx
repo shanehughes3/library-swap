@@ -38,9 +38,10 @@ export class LoginDialog extends React.Component {
                         });
                     } else {
                         this.setState({
-                            loading: false
+                            loading: false,
+                            message: "Success!"
                         });
-                        console.log("Success: ", data)
+                        window.location.reload(true);
                     }
                 }
             });
@@ -146,9 +147,10 @@ export class RegisterDialog extends React.Component {
                         console.log(data.error);
                     } else {
                         this.setState({
-                            loading: false
+                            loading: false,
+                            message: "Success!"
                         });
-                        console.log("Success: ", data);
+                        window.location.reload(true);
                     }
                 }
             });
