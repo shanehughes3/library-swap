@@ -34,8 +34,10 @@ const Book = db.define("Book", {
     },
     title: Sequelize.STRING,
     author: Sequelize.STRING,
-    isbn: Sequelize.STRING,
-    thumbnail: Sequelize.STRING
+    thumbnail: Sequelize.STRING,
+    publisher: Sequelize.STRING,
+    publishedYear: Sequelize.INTEGER,
+    pages: Sequelize.INTEGER
 });
 
 Book.belongsTo(User);
@@ -57,8 +59,47 @@ exports.getUserBooks = function(userID, cb) {
 }
 
 exports.saveBook = function(userID, bookData, cb) {
+    let authorString = "";
+    if (bookData.authors) {
+        bookData.authors.forEach((name) => {
+            if (authorString) {
+                authorString += ", ";
+            }
+            authorString += name;
+        });
+    }
 
-}
+    Book
+        .build({
+            title: bookData.title,
+            author: authorString,
+            thumbnail: bookData.thumbnail || null,
+            publisher: bookData.publisher || null,
+            publishedYear: (bookData.publishedDate) ?
+                           parseInt(bookData.publishedDate.slice(0, 4), 10) :
+                           null,
+            pages: bookData.pageCount || null,
+            UserId: userID
+        })
+        .save()
+        .then((book) => {
+            cb(null);
+        })
+        .catch((err) => cb(err));
+};
+
+exports.deleteBook = function(userID, bookID, cb) {
+    Book.findById(bookID)
+        .then((book) => {
+            if (userID === book.UserId) {
+                book.destroy();
+                cb(null);
+            } else {
+                cb(new Error("Unauthorized"));
+            }
+        })
+        .catch((err) => cb(err));
+};
 
 /* CLEANUP
  */

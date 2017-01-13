@@ -14,23 +14,29 @@ export class Books extends React.Component {
         this.addBook = this.addBook.bind(this);
     }
     componentWillMount() {
-        Ajax.get("/userBooksList", function(err, books) {
+        Ajax.get("/userBooksList", (err, res) => {
             if (err) {
                 console.log(err); ///////////////////////////
             } else {
-                console.log(books); ///////////////////////
+                res = JSON.parse(res);
+                this.setState({
+                    books: res.books
+                });
+                console.log(res); ///////////////////////
             }
         });
     }
     addBook() {
-        
+
     }
     render() {
         return (
             <div>
                 <Header user={this.props.user} />
                 <AddBookInterface addBook={this.addBook} />
-                <BooksDisplay books={this.state.books} />
+                <BooksDisplay
+                    books={this.state.books}
+                    button="DeleteBook" />
             </div>
         );
     }
@@ -88,7 +94,8 @@ class AddBookInterface extends React.Component {
         return (
             <div>
                 <div className="add-book-search">
-                    <Textfield
+                    <Textfield 
+                        label="Add a book"
                         onChange={this.onQueryChange}
                         label="Add Book"
                         expandable
@@ -98,7 +105,7 @@ class AddBookInterface extends React.Component {
                 </div>
                 <BooksDisplay
                     books={this.state.books}
-                    addToUser={true} />
+                    button="AddBook"/>
             </div>
         );
     }

@@ -26946,6 +26946,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactMdl = require("react-mdl");
 
+var _ajax = require("./ajax");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26972,12 +26974,10 @@ var BooksDisplay = exports.BooksDisplay = function (_React$Component) {
             if (this.props.books) {
                 cards = this.props.books.map(function (book) {
                     var cardButton = void 0;
-                    if (_this2.props.addToUser) {
-                        cardButton = _react2.default.createElement(
-                            _reactMdl.Button,
-                            { colored: true },
-                            "Add Book"
-                        );
+                    if (_this2.props.button) {
+                        var ThisButton = buttonTypes[_this2.props.button];
+                        cardButton = _react2.default.createElement(ThisButton, {
+                            id: book.id });
                     }
                     return _react2.default.createElement(
                         _reactMdl.Card,
@@ -26988,9 +26988,9 @@ var BooksDisplay = exports.BooksDisplay = function (_React$Component) {
                         _react2.default.createElement(_reactMdl.CardTitle, {
                             expand: true,
                             className: "book-title",
-                            style: {
-                                background: "url(" + book.thumbnail + ") no-repeat center"
-                            } }),
+                            style: book.thumbnail ?
+                            // prevent requests to /null or /undefined
+                            { background: "url(" + book.thumbnail + ")" + "no-repeat center" } : {} }),
                         _react2.default.createElement(
                             _reactMdl.CardText,
                             null,
@@ -27017,7 +27017,147 @@ var BooksDisplay = exports.BooksDisplay = function (_React$Component) {
     return BooksDisplay;
 }(_react2.default.Component);
 
-},{"react":242,"react-mdl":211}],246:[function(require,module,exports){
+var AddBookButton = function (_React$Component2) {
+    _inherits(AddBookButton, _React$Component2);
+
+    function AddBookButton() {
+        _classCallCheck(this, AddBookButton);
+
+        var _this3 = _possibleConstructorReturn(this, (AddBookButton.__proto__ || Object.getPrototypeOf(AddBookButton)).call(this));
+
+        _this3.state = {
+            loading: false,
+            message: null
+        };
+        _this3.addBook = _this3.addBook.bind(_this3);
+        return _this3;
+    }
+
+    _createClass(AddBookButton, [{
+        key: "addBook",
+        value: function addBook() {
+            var _this4 = this;
+
+            this.setState({
+                loading: true,
+                message: null
+            });
+            _ajax.Ajax.get("/add", "?id=" + this.props.id, function (err, res) {
+                if (err) {
+                    _this4.setState({
+                        loading: false,
+                        message: "Error sending request"
+                    });
+                } else {
+                    res = JSON.parse(res);
+                    if (res.error) {
+                        _this4.setState({
+                            loading: false,
+                            message: "Sorry, an error occurred"
+                        });
+                    } else {
+                        _this4.setState({
+                            loading: false,
+                            message: "Success!"
+                        });
+                        window.location.reload(true);
+                    }
+                }
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "div",
+                null,
+                _react2.default.createElement(
+                    _reactMdl.Button,
+                    { colored: true, onClick: this.addBook },
+                    "Add Book"
+                ),
+                this.state.loading ? _react2.default.createElement(_reactMdl.Spinner, { singleColor: true }) : null,
+                this.state.message
+            );
+        }
+    }]);
+
+    return AddBookButton;
+}(_react2.default.Component);
+
+var DeleteBookButton = function (_React$Component3) {
+    _inherits(DeleteBookButton, _React$Component3);
+
+    function DeleteBookButton() {
+        _classCallCheck(this, DeleteBookButton);
+
+        var _this5 = _possibleConstructorReturn(this, (DeleteBookButton.__proto__ || Object.getPrototypeOf(DeleteBookButton)).call(this));
+
+        _this5.state = {
+            loading: false,
+            message: null
+        };
+        _this5.deleteBook = _this5.deleteBook.bind(_this5);
+        return _this5;
+    }
+
+    _createClass(DeleteBookButton, [{
+        key: "deleteBook",
+        value: function deleteBook() {
+            var _this6 = this;
+
+            this.setState({
+                loading: true,
+                message: null
+            });
+            _ajax.Ajax.get("/delete", "?id=" + this.props.id, function (err, res) {
+                if (res.error) {
+                    _this6.setState({
+                        loading: false,
+                        message: "Error sending request"
+                    });
+                } else {
+                    if (res.error) {
+                        _this6.setState({
+                            loading: false,
+                            message: "Sorry, an error occurred"
+                        });
+                    } else {
+                        _this6.setState({
+                            loading: false,
+                            message: "Success!"
+                        });
+                        window.location.reload(true);
+                    }
+                }
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "div",
+                null,
+                _react2.default.createElement(
+                    _reactMdl.Button,
+                    { colored: true, onClick: this.deleteBook },
+                    "Remove Book"
+                ),
+                this.state.loading ? _react2.default.createElement(_reactMdl.Spinner, { singleColor: true }) : null,
+                this.state.message
+            );
+        }
+    }]);
+
+    return DeleteBookButton;
+}(_react2.default.Component);
+
+var buttonTypes = {
+    AddBook: AddBookButton,
+    DeleteBook: DeleteBookButton
+};
+
+},{"./ajax":243,"react":242,"react-mdl":211}],246:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27040,6 +27180,8 @@ var _ajax = require("./ajax");
 var _booksDisplay = require("./books-display.jsx");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -27066,11 +27208,17 @@ var Books = exports.Books = function (_React$Component) {
     _createClass(Books, [{
         key: "componentWillMount",
         value: function componentWillMount() {
-            _ajax.Ajax.get("/userBooksList", function (err, books) {
+            var _this2 = this;
+
+            _ajax.Ajax.get("/userBooksList", function (err, res) {
                 if (err) {
                     console.log(err); ///////////////////////////
                 } else {
-                    console.log(books); ///////////////////////
+                    res = JSON.parse(res);
+                    _this2.setState({
+                        books: res.books
+                    });
+                    console.log(res); ///////////////////////
                 }
             });
         }
@@ -27085,7 +27233,9 @@ var Books = exports.Books = function (_React$Component) {
                 null,
                 _react2.default.createElement(_header.Header, { user: this.props.user }),
                 _react2.default.createElement(AddBookInterface, { addBook: this.addBook }),
-                _react2.default.createElement(_booksDisplay.BooksDisplay, { books: this.state.books })
+                _react2.default.createElement(_booksDisplay.BooksDisplay, {
+                    books: this.state.books,
+                    button: "DeleteBook" })
             );
         }
     }]);
@@ -27099,9 +27249,9 @@ var AddBookInterface = function (_React$Component2) {
     function AddBookInterface() {
         _classCallCheck(this, AddBookInterface);
 
-        var _this2 = _possibleConstructorReturn(this, (AddBookInterface.__proto__ || Object.getPrototypeOf(AddBookInterface)).call(this));
+        var _this3 = _possibleConstructorReturn(this, (AddBookInterface.__proto__ || Object.getPrototypeOf(AddBookInterface)).call(this));
 
-        _this2.state = {
+        _this3.state = {
             query: "",
             queryOffset: 0,
             timeout: undefined,
@@ -27109,14 +27259,14 @@ var AddBookInterface = function (_React$Component2) {
             books: [],
             error: ""
         };
-        _this2.onQueryChange = _this2.onQueryChange.bind(_this2);
-        return _this2;
+        _this3.onQueryChange = _this3.onQueryChange.bind(_this3);
+        return _this3;
     }
 
     _createClass(AddBookInterface, [{
         key: "onQueryChange",
         value: function onQueryChange(e) {
-            var _this3 = this;
+            var _this4 = this;
 
             if (typeof this.state.timeout === "number") {
                 window.clearTimeout(this.state.timeout);
@@ -27125,27 +27275,27 @@ var AddBookInterface = function (_React$Component2) {
             this.setState({
                 query: e.target.value,
                 timeout: window.setTimeout(function () {
-                    _this3.sendQuery();
+                    _this4.sendQuery();
                 }, 500)
             });
         }
     }, {
         key: "sendQuery",
         value: function sendQuery() {
-            var _this4 = this;
+            var _this5 = this;
 
             this.setState({
                 loading: true,
                 timeout: undefined });
             _ajax.Ajax.get("/lookup", "?q=" + encodeURIComponent(this.state.query) + "\n                    &o=" + this.state.queryOffset, function (err, books) {
                 if (err) {
-                    _this4.setState({
+                    _this5.setState({
                         error: "Sorry, an error occurred",
                         loading: false
                     });
                     console.log("Error: ", err); //////////
                 } else {
-                    _this4.setState({
+                    _this5.setState({
                         books: JSON.parse(books).books,
                         loading: false
                     });
@@ -27156,23 +27306,23 @@ var AddBookInterface = function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
+            var _React$createElement;
+
             return _react2.default.createElement(
                 "div",
                 null,
                 _react2.default.createElement(
                     "div",
                     { className: "add-book-search" },
-                    _react2.default.createElement(_reactMdl.Textfield, {
-                        onChange: this.onQueryChange,
-                        label: "Add Book",
-                        expandable: true,
-                        expandableIcon: "add_circle",
-                        id: "add-book-field" }),
+                    _react2.default.createElement(_reactMdl.Textfield, (_React$createElement = {
+                        label: "Add a book",
+                        onChange: this.onQueryChange
+                    }, _defineProperty(_React$createElement, "label", "Add Book"), _defineProperty(_React$createElement, "expandable", true), _defineProperty(_React$createElement, "expandableIcon", "add_circle"), _defineProperty(_React$createElement, "id", "add-book-field"), _React$createElement)),
                     this.state.loading ? _react2.default.createElement(_reactMdl.Spinner, { singleColor: true }) : ""
                 ),
                 _react2.default.createElement(_booksDisplay.BooksDisplay, {
                     books: this.state.books,
-                    addToUser: true })
+                    button: "AddBook" })
             );
         }
     }]);

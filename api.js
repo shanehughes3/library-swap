@@ -6,13 +6,16 @@ const options = {
 };
 
 exports.search = function(query, offset, cb) {
-    options.offest = offset;
+    options.offset = offset;
+    console.log("|_|_|_|_|_|_|", query, options);
     api.search(query, options, function(err, results, response) {
-        console.log("Error: ", err, "Results: ", results);
-        if (!err) {
-            cb(null, results, response);
-        } else {
+        //console.log("**********err", err);
+        //console.log("**********results", results);
+        //console.log("**********response", response);
+        if (err) {
             cb(err);
+        } else {
+            cb(null, results);
         }
     });
 };

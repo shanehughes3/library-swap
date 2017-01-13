@@ -4,6 +4,9 @@ const router = require("express").Router(),
       api = require("../api");
 
 router.get("/", function(req, res) {
+    if (req.user) {
+        console.log(req.user.username, req.user.id);
+    }
     res.render("index", {user: (req.user) ? req.user.username : ""});
 });
 
@@ -90,11 +93,45 @@ router.get("/userBooksList", function(req, res) {
 
 router.get("/lookup", function(req, res) {
     if (req.query.q) {
-        api.search(req.query.q, req.query.o || 0, function(err, books, meta) {
+        api.search(req.query.q, req.query.o || 0, function(err, books) {
             if (err) {
                 res.json({error: err});
             } else {
-                res.json({books: books, meta: meta});
+                res.json({books: books});
+            }
+        });
+    } else {
+        res.json({error: "Invalid Request"});
+    }
+});
+
+router.get("/add", function(req, res) {
+    if (req.query.id) {
+        api.search(req.query.id, 0, function(err, books) {
+            if (err) {
+                res.json({error: err});
+            } else {
+                db.saveBook(req.user.id, books[0], function(err) {
+                    if (err) {
+                        res.json({error: err});
+                    } else {
+                        res.json({success: true});
+                    }
+                });
+            }
+        });
+    } else {
+        res.json({error: "Invalid Request"});
+    }
+});
+
+router.get("/delete", function(req, res) {
+    if (req.query.id) {
+        db.deleteBook(req.user.id, req.query.id, function(err) {
+            if (err) {
+                res.json({error: err});
+            } else {
+                res.json({success: true});
             }
         });
     } else {
