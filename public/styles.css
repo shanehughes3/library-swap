@@ -3,6 +3,10 @@ a {
     color: black;
 }
 
+/* 
+ * HEADER
+ */
+
 #top-bar {
     font-family: "Cormorant Garamond", serif;
     color: black;
@@ -45,4 +49,24 @@ a {
     top: 5px;
     cursor: pointer;
     z-index: 15;
+}
+
+/*
+ * BOOK DISPLAY
+ */
+
+.cards-container {
+    margin: auto;
+    text-align: center;
+}
+.add-book-search > div {
+    display: inline-block;
+}
+.book-card {
+    width: 250px;
+    margin: 30px;
+    display: inline-block;
+}
+.book-title {
+    height: 250px;
 }

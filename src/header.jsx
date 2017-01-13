@@ -35,6 +35,9 @@ export class Header extends React.Component {
                     </span>
                     <Menu target="user-menu" align="right" ripple>
                         <MenuItem>Inbox</MenuItem>
+                        <a href="/books">
+                            <MenuItem>My Books</MenuItem>
+                        </a>
                         <MenuItem>Profile</MenuItem>
                         <a href="/logout">
                             <MenuItem>Log Out</MenuItem>
@@ -55,7 +58,6 @@ export class Header extends React.Component {
 	    );
 	} 
 
-	// TODO - push logic to child class?
 	let dialog;
 	if (this.state.dialog == "Log In") {
 	    dialog = (<LoginDialog closeDialog={this.closeDialog}/>);
