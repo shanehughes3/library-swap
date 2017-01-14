@@ -44,7 +44,18 @@ const Book = db.define("Book", {
 Book.belongsTo(User);
 
 exports.getLatestBooks = function(offset, userID, cb) {
-
+    Book.findAll({
+        where: {
+            UserId: {
+                $ne: userID
+            }
+        },
+        limit: 15
+    }).then(function(books) {
+        cb(null, books);
+    }).catch(function(err) {
+        cb(err);
+    });
 }
 
 exports.getUserBooks = function(userID, cb) {
@@ -70,8 +81,7 @@ exports.saveBook = function(userID, bookData, cb) {
         });
     }
 
-    Book
-        .build({
+    Book.build({
             title: bookData.title,
             subtitle: bookData.subtitle || null,
             author: authorString,
@@ -82,12 +92,10 @@ exports.saveBook = function(userID, bookData, cb) {
                            null,
             pages: bookData.pageCount || null,
             UserId: userID
-        })
-        .save()
+        }).save()
         .then((book) => {
             cb(null);
-        })
-        .catch((err) => cb(err));
+        }).catch((err) => cb(err));
 };
 
 exports.deleteBook = function(userID, bookID, cb) {
@@ -99,8 +107,7 @@ exports.deleteBook = function(userID, bookID, cb) {
             } else {
                 cb(new Error("Unauthorized"));
             }
-        })
-        .catch((err) => cb(err));
+        }).catch((err) => cb(err));
 };
 
 /* CLEANUP

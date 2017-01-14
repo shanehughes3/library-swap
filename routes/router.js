@@ -42,7 +42,8 @@ function loginFailure(err, req, res) {
 }
 
 router.post("/register", function(req, res) {
-    if (req.body.user && req.body.password && req.body.password.length > 7) {
+    if (req.body.username && req.body.password &&
+        req.body.password.length > 7) {
         db.register(req.body.username, req.body.password, function(err, user) {
 	    if (err) {
 	        res.json({error: err});
@@ -79,6 +80,16 @@ router.get("/books", function(req, res) {
     } else {
         res.redirect("/");
     }
+});
+
+router.get("/latest", function(req, res) {
+    db.getLatestBooks(req.query.o, req.user.id, function(err, books) {
+        if (err) {
+            res.json({error: err});
+        } else {
+            res.json({books: books});
+        }
+    });
 });
 
 router.get("/userBooksList", function(req, res) {

@@ -96,3 +96,10 @@ a {
     font-size: 2em;
     text-align: center;
 }
+.middle-message {
+    text-align: center;
+    padding: 100px;
+}
+.middle-message:empty {
+    padding: 0;
+}

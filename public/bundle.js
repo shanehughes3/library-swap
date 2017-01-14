@@ -27236,9 +27236,37 @@ var DeleteBookButton = function (_React$Component3) {
     return DeleteBookButton;
 }(_react2.default.Component);
 
+var RequestBookButton = function (_React$Component4) {
+    _inherits(RequestBookButton, _React$Component4);
+
+    function RequestBookButton() {
+        _classCallCheck(this, RequestBookButton);
+
+        return _possibleConstructorReturn(this, (RequestBookButton.__proto__ || Object.getPrototypeOf(RequestBookButton)).call(this));
+    }
+
+    _createClass(RequestBookButton, [{
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "div",
+                null,
+                _react2.default.createElement(
+                    _reactMdl.Button,
+                    { colored: true, onClick: this.requestBook },
+                    "Request Book"
+                )
+            );
+        }
+    }]);
+
+    return RequestBookButton;
+}(_react2.default.Component);
+
 var buttonTypes = {
     AddBook: AddBookButton,
-    DeleteBook: DeleteBookButton
+    DeleteBook: DeleteBookButton,
+    RequestBook: RequestBookButton
 };
 
 },{"./ajax":243,"react":242,"react-mdl":211}],246:[function(require,module,exports){
@@ -27264,8 +27292,6 @@ var _ajax = require("./ajax");
 var _booksDisplay = require("./books-display.jsx");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -27406,8 +27432,6 @@ var AddBookInterface = function (_React$Component2) {
     }, {
         key: "render",
         value: function render() {
-            var _React$createElement;
-
             var closeButton = void 0;
             if (this.state.books.length > 0) {
                 closeButton = _react2.default.createElement(_reactMdl.IconButton, {
@@ -27423,11 +27447,12 @@ var AddBookInterface = function (_React$Component2) {
                     _react2.default.createElement(
                         "div",
                         { className: "add-book-search" },
-                        _react2.default.createElement(_reactMdl.Textfield, (_React$createElement = {
-                            label: "Add a book",
+                        _react2.default.createElement(_reactMdl.Textfield, {
                             onChange: this.onQueryChange,
-                            value: this.state.query
-                        }, _defineProperty(_React$createElement, "label", "Add new book..."), _defineProperty(_React$createElement, "floatingLabel", true), _defineProperty(_React$createElement, "id", "add-book-field"), _React$createElement)),
+                            value: this.state.query,
+                            label: "Add new book...",
+                            floatingLabel: true,
+                            id: "add-book-field" }),
                         this.state.loading ? _react2.default.createElement(_reactMdl.Spinner, { singleColor: true }) : ""
                     ),
                     closeButton
@@ -27677,9 +27702,9 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
                     } else {
                         if (data.error) {
                             _this4.setState({
-                                loading: false
+                                loading: false,
+                                message: data.error
                             });
-                            console.log(data.error);
                         } else {
                             _this4.setState({
                                 loading: false,
@@ -28054,6 +28079,12 @@ var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
+var _reactMdl = require("react-mdl");
+
+var _ajax = require("./ajax");
+
+var _booksDisplay = require("./books-display.jsx");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -28068,20 +28099,167 @@ var SearchArea = exports.SearchArea = function (_React$Component) {
     function SearchArea() {
         _classCallCheck(this, SearchArea);
 
-        return _possibleConstructorReturn(this, (SearchArea.__proto__ || Object.getPrototypeOf(SearchArea)).call(this));
+        var _this = _possibleConstructorReturn(this, (SearchArea.__proto__ || Object.getPrototypeOf(SearchArea)).call(this));
+
+        _this.state = {
+            activeTab: 0
+        };
+        return _this;
     }
 
     _createClass(SearchArea, [{
         key: "render",
         value: function render() {
-            return _react2.default.createElement("div", null);
+            var _this2 = this;
+
+            return _react2.default.createElement(
+                "div",
+                null,
+                _react2.default.createElement(
+                    _reactMdl.Tabs,
+                    {
+                        activeTab: this.state.activeTab,
+                        onChange: function onChange(tabId) {
+                            return _this2.setState({ activeTab: tabId });
+                        } },
+                    _react2.default.createElement(
+                        _reactMdl.Tab,
+                        null,
+                        "Newest Offerings"
+                    ),
+                    _react2.default.createElement(
+                        _reactMdl.Tab,
+                        null,
+                        "Search"
+                    )
+                ),
+                _react2.default.createElement(LatestBooks, {
+                    display: this.state.activeTab === 0 ? "block" : "none" }),
+                _react2.default.createElement(SearchBooks, {
+                    display: this.state.activeTab === 1 ? "block" : "none" })
+            );
         }
     }]);
 
     return SearchArea;
 }(_react2.default.Component);
 
-},{"react":242}],252:[function(require,module,exports){
+var LatestBooks = function (_React$Component2) {
+    _inherits(LatestBooks, _React$Component2);
+
+    function LatestBooks() {
+        _classCallCheck(this, LatestBooks);
+
+        var _this3 = _possibleConstructorReturn(this, (LatestBooks.__proto__ || Object.getPrototypeOf(LatestBooks)).call(this));
+
+        _this3.state = {
+            error: "",
+            books: [],
+            offset: 0
+        };
+        return _this3;
+    }
+
+    _createClass(LatestBooks, [{
+        key: "componentWillMount",
+        value: function componentWillMount() {
+            var _this4 = this;
+
+            _ajax.Ajax.get("/latest", "?o=" + this.state.offset, function (err, res) {
+                if (err) {
+                    _this4.setState({
+                        error: "Error retrieving latest books"
+                    });
+                } else {
+                    res = JSON.parse(res);
+                    if (res.error || res.books == false) {
+                        // check for empty
+                        _this4.setState({
+                            error: "No books to display"
+                        });
+                    } else {
+                        _this4.setState({
+                            books: res.books
+                        });
+                    }
+                }
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var spinner = null;
+            // spinner before initial book list load only
+            if (this.state.books.length === 0 && this.state.error === "") {
+                spinner = _react2.default.createElement(_reactMdl.Spinner, { singleColor: true });
+            }
+            return _react2.default.createElement(
+                "div",
+                { style: { display: this.props.display } },
+                _react2.default.createElement(
+                    "div",
+                    { className: "middle-message" },
+                    spinner,
+                    this.state.error
+                ),
+                _react2.default.createElement(_booksDisplay.BooksDisplay, {
+                    books: this.state.books,
+                    button: "RequestBook" })
+            );
+        }
+    }]);
+
+    return LatestBooks;
+}(_react2.default.Component);
+
+var SearchBooks = function (_React$Component3) {
+    _inherits(SearchBooks, _React$Component3);
+
+    function SearchBooks() {
+        _classCallCheck(this, SearchBooks);
+
+        var _this5 = _possibleConstructorReturn(this, (SearchBooks.__proto__ || Object.getPrototypeOf(SearchBooks)).call(this));
+
+        _this5.state = {
+            query: "",
+            books: [],
+            loading: false,
+            error: ""
+        };
+        _this5.onQueryChange = _this5.onQueryChange.bind(_this5);
+        return _this5;
+    }
+
+    _createClass(SearchBooks, [{
+        key: "onQueryChange",
+        value: function onQueryChange(e) {
+            this.setState({
+                query: e.target.value
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            return _react2.default.createElement(
+                "div",
+                { style: { display: this.props.display } },
+                _react2.default.createElement(_reactMdl.Textfield, {
+                    id: "books-search-field",
+                    label: "Search",
+                    value: this.state.query,
+                    onChange: this.onQueryChange,
+                    floatingLabel: true }),
+                _react2.default.createElement(_booksDisplay.BooksDisplay, {
+                    books: this.state.books,
+                    button: "RequestBook" })
+            );
+        }
+    }]);
+
+    return SearchBooks;
+}(_react2.default.Component);
+
+},{"./ajax":243,"./books-display.jsx":245,"react":242,"react-mdl":211}],252:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 

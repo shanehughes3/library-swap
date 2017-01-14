@@ -142,9 +142,9 @@ export class RegisterDialog extends React.Component {
                 } else {
                     if (data.error) {
                         this.setState({
-                            loading: false
+                            loading: false,
+                            message: data.error
                         });
-                        console.log(data.error);
                     } else {
                         this.setState({
                             loading: false,

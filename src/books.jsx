@@ -120,7 +120,6 @@ class AddBookInterface extends React.Component {
                 <div className="search-controls">
                     <div className="add-book-search">
                         <Textfield 
-                            label="Add a book"
                             onChange={this.onQueryChange}
                             value={this.state.query}
                             label="Add new book..."

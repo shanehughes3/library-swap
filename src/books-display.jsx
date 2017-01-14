@@ -189,8 +189,23 @@ class DeleteBookButton extends React.Component {
     }
 }
 
+class RequestBookButton extends React.Component {
+    constructor() {
+        super();
+    }
+
+    render() {
+        return (
+            <div>
+                <Button colored onClick={this.requestBook}>Request Book</Button>
+            </div>
+        );
+    }
+}
+
 const buttonTypes = {
     AddBook: AddBookButton,
-    DeleteBook: DeleteBookButton
+    DeleteBook: DeleteBookButton,
+    RequestBook: RequestBookButton
 };
 
