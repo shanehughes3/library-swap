@@ -26966,6 +26966,78 @@ var BooksDisplay = exports.BooksDisplay = function (_React$Component) {
     }
 
     _createClass(BooksDisplay, [{
+        key: "getInfo",
+        value: function getInfo(book) {
+            var authors = "";
+            if (book.authors) {
+                // array from google api
+                book.authors.forEach(function (authorName) {
+                    if (authors) {
+                        authors += ", ";
+                    }
+                    authors += authorName;
+                });
+            } else if (book.author) {
+                // string from our db
+                authors = book.author;
+            }
+
+            var published = "";
+            if (book.publishedDate) {
+                // from google api, e.g. "2010-12-13"
+                published = book.publishedDate.slice(0, 4);
+            } else if (book.publishedYear) {
+                // from db
+                published = book.publishedYear;
+            }
+
+            return _react2.default.createElement(
+                "span",
+                null,
+                _react2.default.createElement(
+                    "b",
+                    null,
+                    "Title: "
+                ),
+                book.title || "",
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "b",
+                    null,
+                    "Subtitle: "
+                ),
+                book.subtitle || "",
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "b",
+                    null,
+                    "Authors: "
+                ),
+                authors,
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "b",
+                    null,
+                    "Published: "
+                ),
+                published,
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "b",
+                    null,
+                    "Publisher: "
+                ),
+                book.publisher || "",
+                _react2.default.createElement("br", null),
+                _react2.default.createElement(
+                    "b",
+                    null,
+                    "Pages: "
+                ),
+                book.pageCount || book.pages || ""
+            );
+        }
+    }, {
         key: "render",
         value: function render() {
             var _this2 = this;
@@ -27002,6 +27074,18 @@ var BooksDisplay = exports.BooksDisplay = function (_React$Component) {
                             _reactMdl.CardActions,
                             { border: true },
                             cardButton
+                        ),
+                        _react2.default.createElement(
+                            _reactMdl.CardMenu,
+                            null,
+                            _react2.default.createElement(
+                                _reactMdl.Tooltip,
+                                {
+                                    label: _this2.getInfo(book),
+                                    className: "tooltip-icon",
+                                    large: true },
+                                _react2.default.createElement(_reactMdl.Icon, { name: "info_outline" })
+                            )
                         )
                     );
                 });
@@ -27201,7 +27285,6 @@ var Books = exports.Books = function (_React$Component) {
             books: [],
             viewOffset: 0
         };
-        _this.addBook = _this.addBook.bind(_this);
         return _this;
     }
 
@@ -27223,16 +27306,20 @@ var Books = exports.Books = function (_React$Component) {
             });
         }
     }, {
-        key: "addBook",
-        value: function addBook() {}
-    }, {
         key: "render",
         value: function render() {
             return _react2.default.createElement(
                 "div",
                 null,
                 _react2.default.createElement(_header.Header, { user: this.props.user }),
-                _react2.default.createElement(AddBookInterface, { addBook: this.addBook }),
+                _react2.default.createElement(AddBookInterface, null),
+                _react2.default.createElement(
+                    "div",
+                    { className: "mid-page-title" },
+                    "My Books (",
+                    this.state.books.length,
+                    ")"
+                ),
                 _react2.default.createElement(_booksDisplay.BooksDisplay, {
                     books: this.state.books,
                     button: "DeleteBook" })
@@ -27260,6 +27347,7 @@ var AddBookInterface = function (_React$Component2) {
             error: ""
         };
         _this3.onQueryChange = _this3.onQueryChange.bind(_this3);
+        _this3.closeSearch = _this3.closeSearch.bind(_this3);
         return _this3;
     }
 
@@ -27304,21 +27392,45 @@ var AddBookInterface = function (_React$Component2) {
             });
         }
     }, {
+        key: "closeSearch",
+        value: function closeSearch() {
+            this.setState({
+                query: "",
+                queryOffset: 0,
+                timeout: undefined,
+                loading: false,
+                books: [],
+                error: ""
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
             var _React$createElement;
 
+            var closeButton = void 0;
+            if (this.state.books.length > 0) {
+                closeButton = _react2.default.createElement(_reactMdl.IconButton, {
+                    name: "highlight_off",
+                    onClick: this.closeSearch });
+            }
             return _react2.default.createElement(
                 "div",
                 null,
                 _react2.default.createElement(
                     "div",
-                    { className: "add-book-search" },
-                    _react2.default.createElement(_reactMdl.Textfield, (_React$createElement = {
-                        label: "Add a book",
-                        onChange: this.onQueryChange
-                    }, _defineProperty(_React$createElement, "label", "Add Book"), _defineProperty(_React$createElement, "expandable", true), _defineProperty(_React$createElement, "expandableIcon", "add_circle"), _defineProperty(_React$createElement, "id", "add-book-field"), _React$createElement)),
-                    this.state.loading ? _react2.default.createElement(_reactMdl.Spinner, { singleColor: true }) : ""
+                    { className: "search-controls" },
+                    _react2.default.createElement(
+                        "div",
+                        { className: "add-book-search" },
+                        _react2.default.createElement(_reactMdl.Textfield, (_React$createElement = {
+                            label: "Add a book",
+                            onChange: this.onQueryChange,
+                            value: this.state.query
+                        }, _defineProperty(_React$createElement, "label", "Add new book..."), _defineProperty(_React$createElement, "floatingLabel", true), _defineProperty(_React$createElement, "id", "add-book-field"), _React$createElement)),
+                        this.state.loading ? _react2.default.createElement(_reactMdl.Spinner, { singleColor: true }) : ""
+                    ),
+                    closeButton
                 ),
                 _react2.default.createElement(_booksDisplay.BooksDisplay, {
                     books: this.state.books,

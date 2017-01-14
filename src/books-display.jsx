@@ -1,12 +1,45 @@
 import React from "react";
 import {Card, CardTitle, CardText,
-        CardActions, CardMenu, Button, Spinner} from "react-mdl";
+        CardActions, CardMenu, Button, Spinner, Tooltip, Icon} from "react-mdl";
 import {Ajax} from "./ajax";
 
 export class BooksDisplay extends React.Component {
     constructor() {
         super();
     }
+
+    getInfo(book) {
+        let authors = "";
+        if (book.authors) { // array from google api
+            book.authors.forEach((authorName) => {
+                if (authors) {
+                    authors += ", "
+                }
+                authors += authorName;
+            });
+        } else if (book.author) { // string from our db
+            authors = book.author;
+        }
+
+        let published = "";
+        if (book.publishedDate) { // from google api, e.g. "2010-12-13"
+            published = book.publishedDate.slice(0,4);
+        } else if (book.publishedYear) { // from db
+            published = book.publishedYear;
+        }
+
+        return (
+            <span>
+                <b>Title: </b>{book.title || ""}<br />
+            <b>Subtitle: </b>{book.subtitle || ""}<br />
+            <b>Authors: </b>{authors}<br />
+            <b>Published: </b>{published}<br />
+            <b>Publisher: </b>{book.publisher || ""}<br />
+            <b>Pages: </b>{book.pageCount || book.pages || ""}
+            </span>
+        );
+    }
+    
     render() {
         let cards;
         if (this.props.books) {
@@ -21,18 +54,19 @@ export class BooksDisplay extends React.Component {
                 }
                 return ( 
                     <Card
-                    key={book.id}
+                        key={book.id}
                         shadow={1}
                         className="book-card">
-                        <CardTitle
+                    <CardTitle
                             expand
                             className="book-title"
-                    style={(book.thumbnail) ?
-                           // prevent requests to /null or /undefined
+                            style={(book.thumbnail) ?
+                                   // prevent requests to /null or /undefined
                                    {background: `url(${book.thumbnail})` +
-                                                "no-repeat center" }:
-                                                {}
-                            } />
+                                                "no-repeat center" } :
+                                   {}
+                                  }>
+                        </CardTitle>
                         <CardText>
                             {book.title || ""} {(book.authors) ?
                                                   "- " + book.authors[0] : ""}
@@ -40,7 +74,14 @@ export class BooksDisplay extends React.Component {
                         <CardActions border>
                             {cardButton}
                         </CardActions>
-                        
+                        <CardMenu>
+                            <Tooltip
+                                label={this.getInfo(book)}
+                                className="tooltip-icon"
+                                large >
+                                <Icon name="info_outline" />
+                            </Tooltip>
+                        </CardMenu>
                     </Card>
                 );
             });

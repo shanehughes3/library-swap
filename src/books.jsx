@@ -1,5 +1,5 @@
 import React from "react";
-import {Textfield, Spinner} from "react-mdl";
+import {Textfield, Spinner, FABButton, Icon, IconButton} from "react-mdl";
 import {Header} from "./header.jsx";
 import {Ajax} from "./ajax";
 import {BooksDisplay} from "./books-display.jsx";
@@ -11,8 +11,8 @@ export class Books extends React.Component {
             books: [],
             viewOffset: 0
         };
-        this.addBook = this.addBook.bind(this);
     }
+    
     componentWillMount() {
         Ajax.get("/userBooksList", (err, res) => {
             if (err) {
@@ -26,14 +26,15 @@ export class Books extends React.Component {
             }
         });
     }
-    addBook() {
 
-    }
     render() {
         return (
             <div>
                 <Header user={this.props.user} />
-                <AddBookInterface addBook={this.addBook} />
+                <AddBookInterface />
+                <div className="mid-page-title">
+                    My Books ({this.state.books.length})
+                </div>
                 <BooksDisplay
                     books={this.state.books}
                     button="DeleteBook" />
@@ -54,7 +55,9 @@ class AddBookInterface extends React.Component {
             error: ""
         };
         this.onQueryChange = this.onQueryChange.bind(this);
+        this.closeSearch = this.closeSearch.bind(this);
     }
+    
     onQueryChange(e) {
         if (typeof this.state.timeout === "number") {
             window.clearTimeout(this.state.timeout);
@@ -67,6 +70,7 @@ class AddBookInterface extends React.Component {
             }, 500)
         });
     }
+    
     sendQuery() {
         this.setState({
             loading: true,
@@ -90,18 +94,41 @@ class AddBookInterface extends React.Component {
                      }
                  });
     }
+    
+    closeSearch() {
+        this.setState({
+            query: "",
+            queryOffset: 0,
+            timeout: undefined,
+            loading: false,
+            books: [],
+            error: ""
+        });
+    }
+    
     render() {
+        let closeButton;
+        if (this.state.books.length > 0) {
+            closeButton = (
+                <IconButton
+                    name="highlight_off"
+                    onClick={this.closeSearch} />
+            );
+        }
         return (
             <div>
-                <div className="add-book-search">
-                    <Textfield 
-                        label="Add a book"
-                        onChange={this.onQueryChange}
-                        label="Add Book"
-                        expandable
-                        expandableIcon="add_circle"
-                        id="add-book-field" />
-                    {(this.state.loading) ? <Spinner singleColor /> : ""}
+                <div className="search-controls">
+                    <div className="add-book-search">
+                        <Textfield 
+                            label="Add a book"
+                            onChange={this.onQueryChange}
+                            value={this.state.query}
+                            label="Add new book..."
+                            floatingLabel
+                            id="add-book-field" />
+                        {(this.state.loading) ? <Spinner singleColor /> : ""}
+                    </div>
+                    {closeButton}
                 </div>
                 <BooksDisplay
                     books={this.state.books}

@@ -33,6 +33,7 @@ const Book = db.define("Book", {
         primaryKey: true
     },
     title: Sequelize.STRING,
+    subtitle: Sequelize.STRING,
     author: Sequelize.STRING,
     thumbnail: Sequelize.STRING,
     publisher: Sequelize.STRING,
@@ -72,6 +73,7 @@ exports.saveBook = function(userID, bookData, cb) {
     Book
         .build({
             title: bookData.title,
+            subtitle: bookData.subtitle || null,
             author: authorString,
             thumbnail: bookData.thumbnail || null,
             publisher: bookData.publisher || null,
