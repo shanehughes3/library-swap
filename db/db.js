@@ -39,6 +39,12 @@ const Book = db.define("Book", {
     publisher: Sequelize.STRING,
     publishedYear: Sequelize.INTEGER,
     pages: Sequelize.INTEGER
+}, {
+    indexes: [
+        { type: "FULLTEXT",
+          name: "search",
+          fields: ["title", "subtitle", "author"] }
+    ]
 });
 
 Book.belongsTo(User);
@@ -57,6 +63,21 @@ exports.getLatestBooks = function(offset, userID, cb) {
         cb(err);
     });
 }
+
+exports.searchBooks = function(userID, query, offset, cb) {
+    db.query("SELECT * FROM `Books` WHERE " + 
+               "MATCH (title, subtitle, author) " +
+             "AGAINST (? IN NATURAL LANGUAGE MODE) " +
+             "LIMIT 15 OFFSET ?;", 
+             { replacements: [query, parseInt(offset, 10)],
+               type: Sequelize.QueryTypes.SELECT })
+        .then(function(books) {
+            cb(null, books);
+        }).catch(function(err) {
+            cb(err);
+        });
+    
+};
 
 exports.getUserBooks = function(userID, cb) {
     Book.findAll({

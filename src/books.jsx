@@ -76,8 +76,8 @@ class AddBookInterface extends React.Component {
             loading: true,
             timeout: undefined });
         Ajax.get("/lookup",
-                 `?q=${encodeURIComponent(this.state.query)}
-                    &o=${this.state.queryOffset}`,
+                 `?q=${encodeURIComponent(this.state.query)}` + 
+                 `&o=${this.state.queryOffset}`,
                  (err, books) => {
                      if (err) {
                          this.setState({

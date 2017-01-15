@@ -83,13 +83,29 @@ router.get("/books", function(req, res) {
 });
 
 router.get("/latest", function(req, res) {
-    db.getLatestBooks(req.query.o, req.user.id, function(err, books) {
+    db.getLatestBooks(req.query.o || 0, req.user.id, function(err, books) {
         if (err) {
             res.json({error: err});
         } else {
             res.json({books: books});
         }
     });
+});
+
+router.get("/search", function(req, res) {
+    if (req.query.q) {
+        db.searchBooks(
+            req.user.id, req.query.q, req.query.o || 0,
+            function(err, books) {
+                if (err) {
+                    res.json({error: err});
+                } else {
+                    res.json({books: books});
+                }
+            });
+    } else {
+        res.json({error: "Invalid Request"});
+    }
 });
 
 router.get("/userBooksList", function(req, res) {

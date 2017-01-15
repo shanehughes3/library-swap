@@ -27401,7 +27401,7 @@ var AddBookInterface = function (_React$Component2) {
             this.setState({
                 loading: true,
                 timeout: undefined });
-            _ajax.Ajax.get("/lookup", "?q=" + encodeURIComponent(this.state.query) + "\n                    &o=" + this.state.queryOffset, function (err, books) {
+            _ajax.Ajax.get("/lookup", "?q=" + encodeURIComponent(this.state.query) + ("&o=" + this.state.queryOffset), function (err, books) {
                 if (err) {
                     _this5.setState({
                         error: "Sorry, an error occurred",
@@ -28222,9 +28222,11 @@ var SearchBooks = function (_React$Component3) {
 
         _this5.state = {
             query: "",
+            offset: 0,
             books: [],
             loading: false,
-            error: ""
+            error: "",
+            timeout: null
         };
         _this5.onQueryChange = _this5.onQueryChange.bind(_this5);
         return _this5;
@@ -28233,13 +28235,61 @@ var SearchBooks = function (_React$Component3) {
     _createClass(SearchBooks, [{
         key: "onQueryChange",
         value: function onQueryChange(e) {
+            var _this6 = this;
+
+            if (typeof this.state.timeout === "number") {
+                window.clearTimeout(this.state.timeout);
+            }
+
             this.setState({
-                query: e.target.value
+                query: e.target.value,
+                timeout: window.setTimeout(function () {
+                    _this6.sendQuery();
+                }, 500)
+            });
+        }
+    }, {
+        key: "sendQuery",
+        value: function sendQuery() {
+            var _this7 = this;
+
+            this.setState({
+                loading: true,
+                timeout: undefined,
+                error: "",
+                books: []
+            });
+            _ajax.Ajax.get("/search", "?q=" + encodeURIComponent(this.state.query) + ("&o=" + this.state.offset), function (err, res) {
+                if (err) {
+                    _this7.setState({
+                        loading: false,
+                        error: "Sorry, an error occurred"
+                    });
+                } else {
+                    res = JSON.parse(res);
+                    if (res.error) {
+                        _this7.setState({
+                            loading: false,
+                            error: "Sorry, an error occurred"
+                        });
+                    } else {
+                        _this7.setState({
+                            loading: false,
+                            books: res.books || []
+                        });
+                    }
+                }
             });
         }
     }, {
         key: "render",
         value: function render() {
+            var message = void 0;
+            if (this.state.error) {
+                message = this.state.error;
+            } else if (this.state.books.length === 0) {
+                message = "No results to display";
+            }
             return _react2.default.createElement(
                 "div",
                 { style: { display: this.props.display } },
@@ -28249,6 +28299,12 @@ var SearchBooks = function (_React$Component3) {
                     value: this.state.query,
                     onChange: this.onQueryChange,
                     floatingLabel: true }),
+                _react2.default.createElement(
+                    "div",
+                    { className: "middle-message" },
+                    this.state.loading ? _react2.default.createElement(_reactMdl.Spinner, { singleColor: true }) : null,
+                    message
+                ),
                 _react2.default.createElement(_booksDisplay.BooksDisplay, {
                     books: this.state.books,
                     button: "RequestBook" })

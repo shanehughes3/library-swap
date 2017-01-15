@@ -88,20 +88,68 @@ class SearchBooks extends React.Component {
         super();
         this.state = {
             query: "",
+            offset: 0,
             books: [],
             loading: false,
-            error: ""
+            error: "",
+            timeout: null
         };
         this.onQueryChange = this.onQueryChange.bind(this);
     }
 
     onQueryChange(e) {
+        if (typeof this.state.timeout === "number") {
+            window.clearTimeout(this.state.timeout);
+        }
+        
         this.setState({
-            query: e.target.value
+            query: e.target.value,
+            timeout: window.setTimeout(() => {
+                this.sendQuery();
+            }, 500)
         });
+    }
+
+    sendQuery() {
+        this.setState({
+            loading: true,
+            timeout: undefined,
+            error: "",
+            books: []
+        });
+        Ajax.get("/search",
+                 `?q=${encodeURIComponent(this.state.query)}` + 
+                 `&o=${this.state.offset}`,
+                 (err, res) => {
+                     if (err) {
+                         this.setState({
+                             loading: false,
+                             error: "Sorry, an error occurred"
+                         });
+                     } else {
+                         res = JSON.parse(res);
+                         if (res.error) {
+                             this.setState({
+                                 loading: false,
+                                 error: "Sorry, an error occurred"
+                             });
+                         } else {
+                             this.setState({
+                                 loading: false,
+                                 books: res.books || []
+                             });
+                         }
+                     }
+                 });
     }
     
     render() {
+        let message;
+        if (this.state.error) {
+            message = this.state.error;
+        } else if (this.state.books.length === 0) {
+            message = "No results to display";
+        }
         return (
             <div style={{ display: this.props.display }}>
                 <Textfield
@@ -109,10 +157,14 @@ class SearchBooks extends React.Component {
                     label="Search"
                     value={this.state.query}
                     onChange={this.onQueryChange}
-            floatingLabel />
-            <BooksDisplay
-                books={this.state.books}
-                button={"RequestBook"} />
+                    floatingLabel />
+                <div className="middle-message">
+                    {(this.state.loading) ? <Spinner singleColor /> : null}
+                    {message}
+                </div>
+                    <BooksDisplay
+                        books={this.state.books}
+                        button={"RequestBook"} />
             </div>
         );
     }
