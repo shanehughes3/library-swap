@@ -115,7 +115,6 @@ class AddBookButton extends React.Component {
                     message: "Error sending request"
                 });
             } else {
-                res = JSON.parse(res);
                 if (res.error) {
                     this.setState({
                         loading: false,
@@ -157,7 +156,7 @@ class DeleteBookButton extends React.Component {
             message: null
         });
         Ajax.get("/delete", `?id=${this.props.id}`, (err, res) => {
-            if (res.error) {
+            if (err) {
                 this.setState({
                     loading: false,
                     message: "Error sending request"

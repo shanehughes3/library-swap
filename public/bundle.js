@@ -26867,13 +26867,15 @@ var Ajax = exports.Ajax = function () {
     _createClass(Ajax, null, [{
         key: "get",
         value: function get(endpoint, query, cb) {
+            var _this = this;
+
             if (typeof query == "function") {
                 cb = query;
                 query = "";
             }
             var xhr = new XMLHttpRequest();
             xhr.addEventListener("load", function () {
-                return cb(null, xhr.responseText);
+                return _this.parseResponse(xhr.responseText, cb);
             });
             xhr.addEventListener("error", function (e) {
                 return cb(e);
@@ -26883,6 +26885,61 @@ var Ajax = exports.Ajax = function () {
             });
             xhr.open("GET", endpoint + query);
             xhr.send(null);
+        }
+    }, {
+        key: "post",
+        value: function post(endpoint, payload, options, cb) {
+            var _this2 = this;
+
+            if (typeof options == "function") {
+                cb = options;
+                options = {};
+            }
+            var defaults = {
+                contentType: "json"
+            };
+            options = Object.assign({}, defaults, options);
+
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("load", function () {
+                return _this2.parseResponse(xhr.responseText, cb);
+            });
+            xhr.addEventListener("error", function (err) {
+                return cb(err);
+            });
+            xhr.addEventListener("abort", function () {
+                return cb("abort");
+            });
+            xhr.open("POST", endpoint);
+            xhr.setRequestHeader("Content-Type", "application/" + options.contentType);
+            if (options.contentType === "x-www-form-urlencoded") {
+                payload = this.formEncode(payload);
+            }
+            xhr.send(payload);
+        }
+    }, {
+        key: "parseResponse",
+        value: function parseResponse(res, cb) {
+            var err = void 0,
+                responseObj = void 0;
+            try {
+                responseObj = JSON.parse(res);
+            } catch (e) {
+                err = e;
+            }
+            cb(err, responseObj);
+        }
+    }, {
+        key: "formEncode",
+        value: function formEncode(inObj) {
+            var output = "";
+            for (var key in inObj) {
+                if (output) {
+                    output += "&";
+                }
+                output += encodeURIComponent(key) + "=" + encodeURIComponent(inObj[key]);
+            }
+            return output;
         }
     }]);
 
@@ -27133,7 +27190,6 @@ var AddBookButton = function (_React$Component2) {
                         message: "Error sending request"
                     });
                 } else {
-                    res = JSON.parse(res);
                     if (res.error) {
                         _this4.setState({
                             loading: false,
@@ -27195,7 +27251,7 @@ var DeleteBookButton = function (_React$Component3) {
                 message: null
             });
             _ajax.Ajax.get("/delete", "?id=" + this.props.id, function (err, res) {
-                if (res.error) {
+                if (err) {
                     _this6.setState({
                         loading: false,
                         message: "Error sending request"
@@ -27320,10 +27376,9 @@ var Books = exports.Books = function (_React$Component) {
             var _this2 = this;
 
             _ajax.Ajax.get("/userBooksList", function (err, res) {
-                if (err) {
+                if (err || res.error) {
                     console.log(err); ///////////////////////////
                 } else {
-                    res = JSON.parse(res);
                     _this2.setState({
                         books: res.books
                     });
@@ -27401,19 +27456,17 @@ var AddBookInterface = function (_React$Component2) {
             this.setState({
                 loading: true,
                 timeout: undefined });
-            _ajax.Ajax.get("/lookup", "?q=" + encodeURIComponent(this.state.query) + ("&o=" + this.state.queryOffset), function (err, books) {
-                if (err) {
+            _ajax.Ajax.get("/lookup", "?q=" + encodeURIComponent(this.state.query) + ("&o=" + this.state.queryOffset), function (err, res) {
+                if (err || res.error) {
                     _this5.setState({
                         error: "Sorry, an error occurred",
                         loading: false
                     });
-                    console.log("Error: ", err); //////////
                 } else {
                     _this5.setState({
-                        books: JSON.parse(books).books,
+                        books: res.books,
                         loading: false
                     });
-                    console.log(JSON.parse(books)); //////////////
                 }
             });
         }
@@ -27513,6 +27566,8 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactMdl = require("react-mdl");
 
+var _ajax = require("./ajax");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -27522,6 +27577,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var postOptions = {
+    contentType: "x-www-form-urlencoded"
+};
 
 var LoginDialog = exports.LoginDialog = function (_React$Component) {
     _inherits(LoginDialog, _React$Component);
@@ -27556,7 +27615,7 @@ var LoginDialog = exports.LoginDialog = function (_React$Component) {
                     username: this.state.username,
                     password: this.state.password
                 };
-                sendPost("/login", payload, function (err, data) {
+                _ajax.Ajax.post("/login", payload, postOptions, function (err, data) {
                     if (err) {
                         _this2.setState({
                             message: "An unknown error occurred",
@@ -27692,7 +27751,7 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
                     username: this.state.username,
                     password: this.state.password
                 };
-                sendPost("/register", payload, function (err, data) {
+                _ajax.Ajax.post("/register", payload, postOptions, function (err, data) {
                     if (err) {
                         _this4.setState({
                             message: "An unknown error occurred",
@@ -27825,30 +27884,7 @@ var RegisterDialog = exports.RegisterDialog = function (_React$Component2) {
     return RegisterDialog;
 }(_react2.default.Component);
 
-function sendPost(path, payload, cb) {
-    var xhr = new XMLHttpRequest();
-    var outForm = "";
-    for (var key in payload) {
-        if (outForm) {
-            outForm += "&";
-        }
-        outForm += encodeURIComponent(key) + "=" + encodeURIComponent(payload[key]);
-    }
-    xhr.addEventListener("load", function () {
-        return cb(null, JSON.parse(xhr.responseText));
-    });
-    xhr.addEventListener("error", function (e) {
-        return cb(e);
-    });
-    xhr.addEventListener("abort", function () {
-        return cb({ error: "abort" });
-    });
-    xhr.open("POST", path);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.send(outForm);
-}
-
-},{"react":242,"react-mdl":211}],249:[function(require,module,exports){
+},{"./ajax":243,"react":242,"react-mdl":211}],249:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28171,7 +28207,6 @@ var LatestBooks = function (_React$Component2) {
                         error: "Error retrieving latest books"
                     });
                 } else {
-                    res = JSON.parse(res);
                     if (res.error || res.books == false) {
                         // check for empty
                         _this4.setState({
@@ -28242,11 +28277,24 @@ var SearchBooks = function (_React$Component3) {
             }
 
             this.setState({
-                query: e.target.value,
-                timeout: window.setTimeout(function () {
-                    _this6.sendQuery();
-                }, 500)
+                query: e.target.value
             });
+
+            if (e.target.value) {
+                // don't send requests on "", which throws a SQL error
+                this.setState({
+                    timeout: window.setTimeout(function () {
+                        _this6.sendQuery();
+                    }, 500)
+                });
+            } else {
+                this.setState({
+                    loading: false,
+                    books: [],
+                    timeout: undefined,
+                    error: ""
+                });
+            }
         }
     }, {
         key: "sendQuery",
@@ -28266,7 +28314,6 @@ var SearchBooks = function (_React$Component3) {
                         error: "Sorry, an error occurred"
                     });
                 } else {
-                    res = JSON.parse(res);
                     if (res.error) {
                         _this7.setState({
                             loading: false,
@@ -28295,7 +28342,7 @@ var SearchBooks = function (_React$Component3) {
                 { style: { display: this.props.display } },
                 _react2.default.createElement(_reactMdl.Textfield, {
                     id: "books-search-field",
-                    label: "Search",
+                    label: "Enter search terms...",
                     value: this.state.query,
                     onChange: this.onQueryChange,
                     floatingLabel: true }),

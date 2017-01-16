@@ -48,7 +48,6 @@ class LatestBooks extends React.Component {
                     error: "Error retrieving latest books"
                 });
             } else {
-                res = JSON.parse(res);
                 if (res.error || res.books == false) { // check for empty
                     this.setState({
                         error: "No books to display"
@@ -101,13 +100,26 @@ class SearchBooks extends React.Component {
         if (typeof this.state.timeout === "number") {
             window.clearTimeout(this.state.timeout);
         }
-        
+
         this.setState({
-            query: e.target.value,
-            timeout: window.setTimeout(() => {
-                this.sendQuery();
-            }, 500)
+            query: e.target.value
         });
+
+        if (e.target.value) {
+            // don't send requests on "", which throws a SQL error
+            this.setState({
+                timeout: window.setTimeout(() => {
+                    this.sendQuery();
+                }, 500)
+            });
+        } else {
+            this.setState({
+                loading: false,
+                books: [],
+                timeout: undefined,
+                error: ""
+            });
+        }
     }
 
     sendQuery() {
@@ -127,7 +139,6 @@ class SearchBooks extends React.Component {
                              error: "Sorry, an error occurred"
                          });
                      } else {
-                         res = JSON.parse(res);
                          if (res.error) {
                              this.setState({
                                  loading: false,
@@ -154,7 +165,7 @@ class SearchBooks extends React.Component {
             <div style={{ display: this.props.display }}>
                 <Textfield
                     id="books-search-field"
-                    label="Search"
+                    label="Enter search terms..."
                     value={this.state.query}
                     onChange={this.onQueryChange}
                     floatingLabel />

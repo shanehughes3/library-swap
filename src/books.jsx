@@ -15,10 +15,9 @@ export class Books extends React.Component {
     
     componentWillMount() {
         Ajax.get("/userBooksList", (err, res) => {
-            if (err) {
+            if (err || res.error) {
                 console.log(err); ///////////////////////////
             } else {
-                res = JSON.parse(res);
                 this.setState({
                     books: res.books
                 });
@@ -78,19 +77,17 @@ class AddBookInterface extends React.Component {
         Ajax.get("/lookup",
                  `?q=${encodeURIComponent(this.state.query)}` + 
                  `&o=${this.state.queryOffset}`,
-                 (err, books) => {
-                     if (err) {
+                 (err, res) => {
+                     if (err || res.error) {
                          this.setState({
                              error: "Sorry, an error occurred",
                              loading: false
                          });
-                         console.log("Error: ", err); //////////
                      } else {
                          this.setState({
-                             books: JSON.parse(books).books,
+                             books: res.books,
                              loading: false
                          });
-                         console.log(JSON.parse(books)); //////////////
                      }
                  });
     }

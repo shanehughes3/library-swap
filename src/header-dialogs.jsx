@@ -1,5 +1,10 @@
 import React from "react";
 import {Textfield, Button, IconButton, Spinner} from "react-mdl";
+import {Ajax} from "./ajax";
+
+const postOptions = {
+    contentType: "x-www-form-urlencoded"
+};
 
 export class LoginDialog extends React.Component {
     constructor() {
@@ -23,7 +28,7 @@ export class LoginDialog extends React.Component {
                 username: this.state.username,
                 password: this.state.password
             };
-            sendPost("/login", payload, (err, data) => {
+            Ajax.post("/login", payload, postOptions, (err, data) => {
                 if (err) {
                     this.setState({
                         message: "An unknown error occurred",
@@ -132,7 +137,7 @@ export class RegisterDialog extends React.Component {
                 username: this.state.username,
                 password: this.state.password
             };
-            sendPost("/register", payload, (err, data) => {
+            Ajax.post("/register", payload, postOptions, (err, data) => {
                 if (err) {
                     this.setState({
                         message: "An unknown error occurred",
@@ -248,20 +253,4 @@ export class RegisterDialog extends React.Component {
     }
 }
 
-function sendPost(path, payload, cb) {
-    const xhr = new XMLHttpRequest();
-    let outForm = "";
-    for (let key in payload) {
-        if (outForm) {
-            outForm += "&"
-        }
-        outForm +=
-            `${encodeURIComponent(key)}=${encodeURIComponent(payload[key])}`;
-    }
-    xhr.addEventListener("load", () => cb(null, JSON.parse(xhr.responseText)));
-    xhr.addEventListener("error", (e) => cb(e));
-    xhr.addEventListener("abort", () => cb({error: "abort"}));
-    xhr.open("POST", path);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.send(outForm);
-}
+
