@@ -26855,6 +26855,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -26872,6 +26874,9 @@ var Ajax = exports.Ajax = function () {
             if (typeof query == "function") {
                 cb = query;
                 query = "";
+            }
+            if ((typeof query === "undefined" ? "undefined" : _typeof(query)) == "object") {
+                query = "?" + this.formEncode(query);
             }
             var xhr = new XMLHttpRequest();
             xhr.addEventListener("load", function () {
@@ -26914,8 +26919,28 @@ var Ajax = exports.Ajax = function () {
             xhr.setRequestHeader("Content-Type", "application/" + options.contentType);
             if (options.contentType === "x-www-form-urlencoded") {
                 payload = this.formEncode(payload);
+            } else if (options.contentType === "json") {
+                payload = JSON.stringify(payload);
             }
             xhr.send(payload);
+        }
+    }, {
+        key: "delete",
+        value: function _delete(endpoint, cb) {
+            var _this3 = this;
+
+            var xhr = new XMLHttpRequest();
+            xhr.addEventListener("load", function () {
+                return _this3.parseResponse(xhr.responseText, cb);
+            });
+            xhr.addEventListener("error", function (err) {
+                return cb(err);
+            });
+            xhr.addEventListener("abort", function () {
+                return cb("abort");
+            });
+            xhr.open("DELETE", endpoint);
+            xhr.send(null);
         }
     }, {
         key: "parseResponse",
@@ -27183,7 +27208,7 @@ var AddBookButton = function (_React$Component2) {
                 loading: true,
                 message: null
             });
-            _ajax.Ajax.get("/add", "?id=" + this.props.id, function (err, res) {
+            _ajax.Ajax.post("/booksApi", { id: this.props.id }, function (err, res) {
                 if (err) {
                     _this4.setState({
                         loading: false,
@@ -27250,7 +27275,7 @@ var DeleteBookButton = function (_React$Component3) {
                 loading: true,
                 message: null
             });
-            _ajax.Ajax.get("/delete", "?id=" + this.props.id, function (err, res) {
+            _ajax.Ajax.delete("/booksApi/" + this.props.id, function (err, res) {
                 if (err) {
                     _this6.setState({
                         loading: false,
@@ -27375,7 +27400,7 @@ var Books = exports.Books = function (_React$Component) {
         value: function componentWillMount() {
             var _this2 = this;
 
-            _ajax.Ajax.get("/userBooksList", function (err, res) {
+            _ajax.Ajax.get("/booksApi/user", function (err, res) {
                 if (err || res.error) {
                     console.log(err); ///////////////////////////
                 } else {
@@ -27456,7 +27481,10 @@ var AddBookInterface = function (_React$Component2) {
             this.setState({
                 loading: true,
                 timeout: undefined });
-            _ajax.Ajax.get("/lookup", "?q=" + encodeURIComponent(this.state.query) + ("&o=" + this.state.queryOffset), function (err, res) {
+            _ajax.Ajax.get("/booksApi/lookup", {
+                q: this.state.query,
+                o: this.state.queryOffset
+            }, function (err, res) {
                 if (err || res.error) {
                     _this5.setState({
                         error: "Sorry, an error occurred",
@@ -28201,7 +28229,7 @@ var LatestBooks = function (_React$Component2) {
         value: function componentWillMount() {
             var _this4 = this;
 
-            _ajax.Ajax.get("/latest", "?o=" + this.state.offset, function (err, res) {
+            _ajax.Ajax.get("/booksApi/latest", "?o=" + this.state.offset, function (err, res) {
                 if (err) {
                     _this4.setState({
                         error: "Error retrieving latest books"
@@ -28307,7 +28335,7 @@ var SearchBooks = function (_React$Component3) {
                 error: "",
                 books: []
             });
-            _ajax.Ajax.get("/search", "?q=" + encodeURIComponent(this.state.query) + ("&o=" + this.state.offset), function (err, res) {
+            _ajax.Ajax.get("/booksApi/search", "?q=" + encodeURIComponent(this.state.query) + ("&o=" + this.state.offset), function (err, res) {
                 if (err) {
                     _this7.setState({
                         loading: false,

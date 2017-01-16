@@ -82,8 +82,11 @@ router.get("/books", function(req, res) {
     }
 });
 
-router.get("/latest", function(req, res) {
-    db.getLatestBooks(req.query.o || 0, req.user.id, function(err, books) {
+router.get("/booksApi/latest", function(req, res) {
+    // allow unauthenticated requests but remove user's own books on
+    // authenticated requests
+    const userId = (req.user) ? req.user.id : null;
+    db.getLatestBooks(req.query.o || 0, userId, function(err, books) {
         if (err) {
             res.json({error: err});
         } else {
@@ -92,7 +95,7 @@ router.get("/latest", function(req, res) {
     });
 });
 
-router.get("/search", function(req, res) {
+router.get("/booksApi/search", function(req, res) {
     if (req.query.q) {
         db.searchBooks(
             req.user.id, req.query.q, req.query.o || 0,
@@ -108,17 +111,21 @@ router.get("/search", function(req, res) {
     }
 });
 
-router.get("/userBooksList", function(req, res) {
-    db.getUserBooks(req.user.id, function(err, books) {
-        if (err) {
-            res.json({error: err});
-        } else {
-            res.json({books: books});
-        }
-    });
+router.get("/booksApi/user", function(req, res) {
+    if (req.user) { 
+        db.getUserBooks(req.user.id, function(err, books) {
+            if (err) {
+                res.json({error: err});
+            } else {
+                res.json({books: books});
+            }
+        });
+    } else {
+        res.json({error: "Unauthorized"});
+    }
 });
 
-router.get("/lookup", function(req, res) {
+router.get("/booksApi/lookup", function(req, res) {
     if (req.query.q) {
         api.search(req.query.q, req.query.o || 0, function(err, books) {
             if (err) {
@@ -132,9 +139,9 @@ router.get("/lookup", function(req, res) {
     }
 });
 
-router.get("/add", function(req, res) {
-    if (req.query.id) {
-        api.search(req.query.id, 0, function(err, books) {
+router.post("/booksApi", function(req, res) {
+    if (req.body.id && req.user) {
+        api.search(req.body.id, 0, function(err, books) {
             if (err) {
                 res.json({error: err});
             } else {
@@ -147,23 +154,21 @@ router.get("/add", function(req, res) {
                 });
             }
         });
+    } else if (!req.user) {
+        res.json({error: "Unauthorized"});
     } else {
         res.json({error: "Invalid Request"});
     }
 });
 
-router.get("/delete", function(req, res) {
-    if (req.query.id) {
-        db.deleteBook(req.user.id, req.query.id, function(err) {
-            if (err) {
-                res.json({error: err});
-            } else {
-                res.json({success: true});
-            }
-        });
-    } else {
-        res.json({error: "Invalid Request"});
-    }
+router.delete("/booksApi/:id", function(req, res) {
+    db.deleteBook(req.user.id, req.params.id, function(err) {
+        if (err) {
+            res.json({error: err});
+        } else {
+            res.json({success: true});
+        }
+    });
 });
 
 module.exports = router;

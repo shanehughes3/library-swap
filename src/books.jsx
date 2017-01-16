@@ -14,7 +14,7 @@ export class Books extends React.Component {
     }
     
     componentWillMount() {
-        Ajax.get("/userBooksList", (err, res) => {
+        Ajax.get("/booksApi/user", (err, res) => {
             if (err || res.error) {
                 console.log(err); ///////////////////////////
             } else {
@@ -74,22 +74,22 @@ class AddBookInterface extends React.Component {
         this.setState({
             loading: true,
             timeout: undefined });
-        Ajax.get("/lookup",
-                 `?q=${encodeURIComponent(this.state.query)}` + 
-                 `&o=${this.state.queryOffset}`,
-                 (err, res) => {
-                     if (err || res.error) {
-                         this.setState({
-                             error: "Sorry, an error occurred",
-                             loading: false
-                         });
-                     } else {
-                         this.setState({
-                             books: res.books,
-                             loading: false
-                         });
-                     }
-                 });
+        Ajax.get("/booksApi/lookup", {
+            q: this.state.query,
+            o: this.state.queryOffset
+        }, (err, res) => {
+            if (err || res.error) {
+                this.setState({
+                    error: "Sorry, an error occurred",
+                    loading: false
+                });
+            } else {
+                this.setState({
+                    books: res.books,
+                    loading: false
+                });
+            }
+        });
     }
     
     closeSearch() {

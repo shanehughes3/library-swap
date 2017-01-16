@@ -4,6 +4,9 @@ export class Ajax {
             cb = query;
             query = "";
         }
+        if (typeof query == "object") {
+            query = "?" + this.formEncode(query);
+        }
         const xhr = new XMLHttpRequest();
         xhr.addEventListener("load", () => 
             this.parseResponse(xhr.responseText, cb));
@@ -33,8 +36,20 @@ export class Ajax {
                              `application/${options.contentType}`);
         if (options.contentType === "x-www-form-urlencoded") {
             payload = this.formEncode(payload);
+        } else if (options.contentType === "json") {
+            payload = JSON.stringify(payload);
         }
         xhr.send(payload);
+    }
+
+    static delete(endpoint, cb) {
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener("load", () =>
+            this.parseResponse(xhr.responseText, cb));
+        xhr.addEventListener("error", (err) => cb(err));
+        xhr.addEventListener("abort", () => cb("abort"));
+        xhr.open("DELETE", endpoint);
+        xhr.send(null);
     }
 
     static parseResponse(res, cb) {
