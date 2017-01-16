@@ -131,6 +131,13 @@ exports.deleteBook = function(userID, bookID, cb) {
         }).catch((err) => cb(err));
 };
 
+
+/*
+ * REQUESTS
+ */
+
+
+
 /* CLEANUP
  */
 
