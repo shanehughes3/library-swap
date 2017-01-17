@@ -42,7 +42,7 @@ class LatestBooks extends React.Component {
     }
 
     componentWillMount() {
-        Ajax.get("/booksApi/latest", `?o=${this.state.offset}`, (err, res) => {
+        Ajax.get("/api/books/latest", `?o=${this.state.offset}`, (err, res) => {
             if (err) {
                 this.setState({
                     error: "Error retrieving latest books"
@@ -129,7 +129,7 @@ class SearchBooks extends React.Component {
             error: "",
             books: []
         });
-        Ajax.get("/booksApi/search",
+        Ajax.get("/api/books/search",
                  `?q=${encodeURIComponent(this.state.query)}` + 
                  `&o=${this.state.offset}`,
                  (err, res) => {

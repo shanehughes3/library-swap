@@ -108,7 +108,7 @@ class AddBookButton extends React.Component {
             loading: true,
             message: null
         });
-        Ajax.post("/booksApi", {id: this.props.id}, (err, res) => {
+        Ajax.post("/api/books", {id: this.props.id}, (err, res) => {
             if (err) {
                 this.setState({
                     loading: false,
@@ -155,7 +155,7 @@ class DeleteBookButton extends React.Component {
             loading: true,
             message: null
         });
-        Ajax.delete(`/booksApi/${this.props.id}`, (err, res) => {
+        Ajax.delete(`/api/books/${this.props.id}`, (err, res) => {
             if (err) {
                 this.setState({
                     loading: false,

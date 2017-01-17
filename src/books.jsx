@@ -14,7 +14,7 @@ export class Books extends React.Component {
     }
     
     componentWillMount() {
-        Ajax.get("/booksApi/user", (err, res) => {
+        Ajax.get("/api/books/user", (err, res) => {
             if (err || res.error) {
                 console.log(err); ///////////////////////////
             } else {
@@ -74,7 +74,7 @@ class AddBookInterface extends React.Component {
         this.setState({
             loading: true,
             timeout: undefined });
-        Ajax.get("/booksApi/lookup", {
+        Ajax.get("/api/books/lookup", {
             q: this.state.query,
             o: this.state.queryOffset
         }, (err, res) => {

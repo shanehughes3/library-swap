@@ -1,9 +1,9 @@
 const router = require("express").Router(),
       passport = require("passport"),
       db = require("../db/db"),
-      api = require("../api"),
       authRoutes = require("./auth"),
-      bookRoutes = require("./books");
+      bookRoutes = require("./books"),
+      bookRequestRoutes = require("./book-requests");
 
 router.get("/", function(req, res) {
     if (req.user) {
@@ -14,5 +14,6 @@ router.get("/", function(req, res) {
 
 router.use(authRoutes);
 router.use(bookRoutes);
+router.use(bookRequestRoutes);
 
 module.exports = router;

@@ -49,11 +49,11 @@ const Book = db.define("Book", {
 
 Book.belongsTo(User);
 
-exports.getLatestBooks = function(offset, userID, cb) {
+exports.getLatestBooks = function(offset, userId, cb) {
     Book.findAll({
         where: {
             UserId: {
-                $ne: userID
+                $ne: userId
             }
         },
         limit: 15
@@ -64,7 +64,7 @@ exports.getLatestBooks = function(offset, userID, cb) {
     });
 }
 
-exports.searchBooks = function(userID, query, offset, cb) {
+exports.searchBooks = function(userId, query, offset, cb) {
     db.query("SELECT * FROM `Books` WHERE " + 
                "MATCH (title, subtitle, author) " +
              "AGAINST (? IN NATURAL LANGUAGE MODE) " +
@@ -79,10 +79,10 @@ exports.searchBooks = function(userID, query, offset, cb) {
     
 };
 
-exports.getUserBooks = function(userID, cb) {
+exports.getUserBooks = function(userId, cb) {
     Book.findAll({
         where: {
-            userId: userID
+            userId: userId
         }
     }).then(function(books) {
         cb(null, books);
@@ -91,7 +91,7 @@ exports.getUserBooks = function(userID, cb) {
     });
 }
 
-exports.saveBook = function(userID, bookData, cb) {
+exports.saveBook = function(userId, bookData, cb) {
     let authorString = "";
     if (bookData.authors) {
         bookData.authors.forEach((name) => {
@@ -112,17 +112,17 @@ exports.saveBook = function(userID, bookData, cb) {
                            parseInt(bookData.publishedDate.slice(0, 4), 10) :
                            null,
             pages: bookData.pageCount || null,
-            UserId: userID
+            UserId: userId
         }).save()
         .then((book) => {
             cb(null);
         }).catch((err) => cb(err));
 };
 
-exports.deleteBook = function(userID, bookID, cb) {
-    Book.findById(bookID)
+exports.deleteBook = function(userId, bookId, cb) {
+    Book.findById(bookId)
         .then((book) => {
-            if (userID === book.UserId) {
+            if (userId === book.UserId) {
                 book.destroy();
                 cb(null);
             } else {
@@ -133,10 +133,98 @@ exports.deleteBook = function(userID, bookID, cb) {
 
 
 /*
- * REQUESTS
+ * BOOK REQUESTS
  */
 
+const Request = db.define("Request", {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    status: {   // status should be "open," "accepted," or "rejected"
+        type: Sequelize.STRING,
+                allowNull: false,
+                defaultValue: "open"
+    }
+});
 
+Request.belongsTo(User, { as: "SellerUser" });
+Request.belongsTo(User, { as: "BuyerUser" });
+Request.belongsTo(Book, { as: "SellerBook" });
+Request.belongsTo(Book, { as: "BuyerBook" });
+
+// seller/buyer naming is used to avoid [decrease] confusion - buyer is the
+// user who clicked "request book"; seller will get the notification
+// in his/her inbox
+
+exports.newRequest = function(buyerUserId, buyerBookId, sellerBookId, cb) {
+    Book.findById(sellerBookId)
+        .then((sellerBook) => {
+            Request.build({
+                SellerUserId: sellerBook.UserId,
+                SellerBookId: sellerBookId,
+                BuyerUserId: buyerUserId,
+                BuyerBookId: buyerBookId
+            }).save()
+                   .then(() => cb(null))  ////////// TODO - create new message?
+                   .catch((err) => cb(err));
+        })
+        .catch((err) => cb(err)); // catch sellerBook lookup
+};
+
+exports.viewRequest = function(userId, requestId, cb) {
+    Request.findById(requestId)
+           .then((request) => {
+               if (userId === request.SellerUserId ||
+                   userId === request.BuyerUserId) {
+                   // restrict access
+                   cb(null, request);
+               } else {
+                   cb(new Error("Unauthorized"));
+               }
+           })
+           .catch((err) => cb(err));
+};
+
+exports.getIncomingUserRequests = function(userId, cb) {
+    Request.findAll({
+        where: {
+            SellerUserId: userId
+        }
+    })
+           .then((reqs) => cb(null, reqs))
+           .catch((err) => cb(err));
+};
+
+exports.getOutgoingUserRequests = function(userId, cb) {
+    Request.findAll({
+        where: {
+            BuyerUserId: userId
+        }
+    })
+           .then((reqs) => cb(null, reqs))
+           .catch((err) => cb(err));
+};
+
+exports.changeRequestStatus = function(userId, requestId, newStatus, cb) {
+    if (["accepted", "rejected"].includes(newStatus)) {
+        Request.findById(requestId)
+               .then((request) => {
+                   if (userId === request.SellerUserId) {
+                       request.status = newStatus;
+                       request.save()
+                              .then(() => cb(null))
+                              .catch((err) => cb(err));
+                   } else {
+                       cb(new Error("Unauthorized"));
+                   }
+               })
+               .catch();
+    } else {
+        cb(new Error("Invalid Request"));
+    }
+};
 
 /* CLEANUP
  */

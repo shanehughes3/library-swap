@@ -11,7 +11,7 @@ router.get("/books", function(req, res) {
     }
 });
 
-router.get("/booksApi/latest", function(req, res) {
+router.get("/api/books/latest", function(req, res) {
     // allow unauthenticated requests but remove user's own books on
     // authenticated requests
     const userId = (req.user) ? req.user.id : null;
@@ -24,7 +24,7 @@ router.get("/booksApi/latest", function(req, res) {
     });
 });
 
-router.get("/booksApi/search", function(req, res) {
+router.get("/api/books/search", function(req, res) {
     if (req.query.q) {
         db.searchBooks(
             req.user.id, req.query.q, req.query.o || 0,
@@ -40,7 +40,7 @@ router.get("/booksApi/search", function(req, res) {
     }
 });
 
-router.get("/booksApi/user", function(req, res) {
+router.get("/api/books/user", function(req, res) {
     if (req.user) { 
         db.getUserBooks(req.user.id, function(err, books) {
             if (err) {
@@ -54,7 +54,7 @@ router.get("/booksApi/user", function(req, res) {
     }
 });
 
-router.get("/booksApi/lookup", function(req, res) {
+router.get("/api/books/lookup", function(req, res) {
     if (req.query.q) {
         googleApi.search(req.query.q, req.query.o || 0, function(err, books) {
             if (err) {
@@ -68,7 +68,7 @@ router.get("/booksApi/lookup", function(req, res) {
     }
 });
 
-router.post("/booksApi", function(req, res) {
+router.post("/api/books", function(req, res) {
     if (req.body.id && req.user) {
         googleApi.search(req.body.id, 0, function(err, books) {
             if (err) {
@@ -90,7 +90,7 @@ router.post("/booksApi", function(req, res) {
     }
 });
 
-router.delete("/booksApi/:id", function(req, res) {
+router.delete("/api/books/:id", function(req, res) {
     db.deleteBook(req.user.id, req.params.id, function(err) {
         if (err) {
             res.json({error: err});
