@@ -1,6 +1,14 @@
 const router = require("express").Router(),
       db = require("../db/db");
 
+router.get("/requests*", function(req, res) {
+    if (req.user) {
+        res.render("requests", {user: req.user.username});
+    } else {
+        res.redirect("/");
+    }
+});
+
 router.post("/api/reqests", function(req, res) {
     if (req.user && req.body.offerBookId && req.body.requestedBookId) {
         db.newRequest(req.user.id, req.body.offerBookId,

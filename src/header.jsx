@@ -34,7 +34,9 @@ export class Header extends React.Component {
                         {this.props.user}
                     </span>
                     <Menu target="user-menu" align="right" ripple>
-                        <MenuItem>Inbox</MenuItem>
+                        <a href="/requests">
+                            <MenuItem>Inbox</MenuItem>
+                        </a>
                         <a href="/books">
                             <MenuItem>My Books</MenuItem>
                         </a>

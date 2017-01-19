@@ -4,10 +4,12 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Index} from "./index.jsx";
 import {Books} from "./books.jsx";
+import {Requests} from "./requests.jsx";
 
 const apps = {
     "home-app": Index,
-    "my-books": Books
+    "my-books": Books,
+    "requests": Requests
 };
 
 function renderApp(element) {
