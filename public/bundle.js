@@ -33043,10 +33043,14 @@ var RequestsLayout = exports.RequestsLayout = function (_React$Component2) {
         value: function render() {
             return _react2.default.createElement(
                 "div",
-                null,
+                { className: "requests-container" },
                 _react2.default.createElement(_header.Header, { user: this.props.route.user }),
                 _react2.default.createElement(RequestsNav, null),
-                this.props.children
+                _react2.default.createElement(
+                    "div",
+                    { className: "requests-main-window" },
+                    this.props.children
+                )
             );
         }
     }]);
@@ -33060,12 +33064,22 @@ var RequestsNav = exports.RequestsNav = function (_React$Component3) {
     function RequestsNav() {
         _classCallCheck(this, RequestsNav);
 
-        return _possibleConstructorReturn(this, (RequestsNav.__proto__ || Object.getPrototypeOf(RequestsNav)).call(this));
+        var _this3 = _possibleConstructorReturn(this, (RequestsNav.__proto__ || Object.getPrototypeOf(RequestsNav)).call(this));
+
+        _this3.state = {
+            activeTab: 0
+        };
+        return _this3;
     }
 
     _createClass(RequestsNav, [{
         key: "render",
         value: function render() {
+            var _this4 = this;
+
+            var linkClasses = ["", "", ""];
+            linkClasses[this.state.activeTab] = " requests-side-menu-item-active";
+            console.log(linkClasses);
             return _react2.default.createElement(
                 "div",
                 { className: "requests-side-menu" },
@@ -33074,7 +33088,10 @@ var RequestsNav = exports.RequestsNav = function (_React$Component3) {
                     { to: "/requests/" },
                     _react2.default.createElement(
                         "div",
-                        { className: "requests-side-menu-item" },
+                        { onClick: function onClick() {
+                                return _this4.setState({ activeTab: 0 });
+                            },
+                            className: "requests-side-menu-item" + linkClasses[0] },
                         "Newest Messages"
                     )
                 ),
@@ -33083,7 +33100,10 @@ var RequestsNav = exports.RequestsNav = function (_React$Component3) {
                     { to: "/requests/incoming" },
                     _react2.default.createElement(
                         "div",
-                        { className: "requests-side-menu-item" },
+                        { onClick: function onClick() {
+                                return _this4.setState({ activeTab: 1 });
+                            },
+                            className: "requests-side-menu-item" + linkClasses[1] },
                         "Incoming Requests"
                     )
                 ),
@@ -33092,7 +33112,10 @@ var RequestsNav = exports.RequestsNav = function (_React$Component3) {
                     { to: "/requests/outgoing" },
                     _react2.default.createElement(
                         "div",
-                        { className: "requests-side-menu-item" },
+                        { onClick: function onClick() {
+                                return _this4.setState({ activeTab: 2 });
+                            },
+                            className: "requests-side-menu-item" + linkClasses[2] },
                         "My Requests"
                     )
                 )

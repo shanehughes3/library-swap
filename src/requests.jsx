@@ -28,10 +28,12 @@ export class RequestsLayout extends React.Component {
     }
     render() {
         return (
-            <div>
+            <div className="requests-container">
                 <Header user={this.props.route.user} />
                 <RequestsNav />
-                {this.props.children}
+                <div className="requests-main-window">
+                    {this.props.children}
+                </div>
             </div>
         );
     }
@@ -40,22 +42,30 @@ export class RequestsLayout extends React.Component {
 export class RequestsNav extends React.Component {
     constructor() {
         super();
+        this.state = {
+            activeTab: 0
+        };
     }
     render() {
+        const linkClasses = ["", "", ""];
+        linkClasses[this.state.activeTab] = " requests-side-menu-item-active";
         return (
             <div className="requests-side-menu">
                 <Link to="/requests/">
-                    <div className="requests-side-menu-item">
+                    <div onClick={() => this.setState({activeTab: 0})}
+                        className={"requests-side-menu-item" + linkClasses[0]}>
                         Newest Messages
                     </div>
                 </Link>
                 <Link to="/requests/incoming">
-                    <div className="requests-side-menu-item">
+                    <div onClick={() => this.setState({activeTab: 1})}
+                        className={"requests-side-menu-item" + linkClasses[1]}>
                         Incoming Requests
                     </div>
                 </Link>
                 <Link to="/requests/outgoing">
-                    <div className="requests-side-menu-item">
+                    <div onClick={() => this.setState({activeTab: 2})}
+                        className={"requests-side-menu-item" + linkClasses[2]}>
                         My Requests
                     </div>
                 </Link>
