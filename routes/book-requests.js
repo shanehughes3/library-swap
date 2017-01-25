@@ -9,7 +9,8 @@ router.get("/requests*", function(req, res) {
     }
 });
 
-router.post("/api/reqests", function(req, res) {
+router.post("/api/requests", function(req, res) {
+    // new request submission
     if (req.user && req.body.offerBookId && req.body.requestedBookId) {
         db.newRequest(req.user.id, req.body.offerBookId,
                       req.body.requestedBookId, function(err) {

@@ -29778,6 +29778,9 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+	/**
+	 * @namespace 
+	 */
 	var Ajax = exports.Ajax = function () {
 	    function Ajax() {
 	        _classCallCheck(this, Ajax);
@@ -29785,6 +29788,13 @@
 
 	    _createClass(Ajax, null, [{
 	        key: "get",
+
+	        /**
+	         * Send a GET request
+	         * @param {string} endpoint - The request endpoint
+	         * @param {(string|Object)} [query] - The request query string or object
+	         * @param {requestCallback} cb - The callback that handles the response or error
+	         */
 	        value: function get(endpoint, query, cb) {
 	            var _this = this;
 
@@ -29808,6 +29818,16 @@
 	            xhr.open("GET", endpoint + query);
 	            xhr.send(null);
 	        }
+
+	        /**
+	         * Send a POST request
+	         * @param {string} endpoint - The request endpoint
+	         * @param {Object} payload - The request body payload
+	         * @param {Object} [options] - The options for the particular request
+	         * @param {string} [options.contentType] - The "Content-Type" header for the request, minus the "application/" prefix. Can be either "json" or "x-www-form-urlencoded". Defaults to "json".
+	         * @param {requestCallback} cb - The callback that handles the response or error
+	         */
+
 	    }, {
 	        key: "post",
 	        value: function post(endpoint, payload, options, cb) {
@@ -29841,6 +29861,13 @@
 	            }
 	            xhr.send(payload);
 	        }
+
+	        /**
+	         * Send a DELETE request
+	         * @param {string} endpoint - The request endpoint
+	         * @param {requestCallback} cb - The callback that handles the response or error
+	         */
+
 	    }, {
 	        key: "delete",
 	        value: function _delete(endpoint, cb) {
@@ -29887,6 +29914,13 @@
 
 	    return Ajax;
 	}();
+
+	/**
+	 * Global callback type
+	 * @callback requestCallback
+	 * @param {object} err - Any error encountered (null on no error)
+	 * @param {object} res - The server's response (null on error)
+	 */
 
 /***/ },
 /* 250 */
