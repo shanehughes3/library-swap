@@ -1,11 +1,30 @@
 import React from "react";
-import {Card, CardTitle, CardText,
-        CardActions, CardMenu, Button, Spinner, Tooltip, Icon} from "react-mdl";
+import {Card, CardTitle, CardText, CardActions, CardMenu, Button, Spinner,
+        Tooltip, Icon, Dialog, DialogTitle, DialogContent,
+        DialogActions} from "react-mdl";
+import {SelectField, Option} from "react-mdl-extra";
 import {Ajax} from "./ajax";
 
 export class BooksDisplay extends React.Component {
     constructor() {
         super();
+        this.state = {
+            userBooks: []
+        };
+    }
+
+    componentWillMount() {
+        if (this.props.button == "RequestBook") {
+            Ajax.get("/api/books/user", (err, res) => {
+                if (err) {
+                    console.log(err); //////////////
+                } else {
+                    this.setState({
+                        userBooks: res.books
+                    });
+                }
+            });
+        }
     }
 
     getInfo(book) {
@@ -49,7 +68,9 @@ export class BooksDisplay extends React.Component {
                     const ThisButton = buttonTypes[this.props.button];
                     cardButton = (
                         <ThisButton
-                            id={book.id} />
+                            id={book.id}
+                            title={book.title}
+                            userBooks={this.state.userBooks} />
                     );
                 }
                 return ( 
@@ -191,12 +212,80 @@ class DeleteBookButton extends React.Component {
 class RequestBookButton extends React.Component {
     constructor() {
         super();
+        this.state = {
+            openDialog: false,
+            offerBook: undefined
+        };
+        this.handleOpenDialog = this.handleOpenDialog.bind(this);
+        this.handleCloseDialog = this.handleCloseDialog.bind(this);
+        this.handleSelect = this.handleSelect.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleOpenDialog() {
+        this.setState({
+            openDialog: true
+        });
+    }
+
+    handleCloseDialog() {
+        this.setState({
+            openDialog: false
+        });
+    }
+
+    handleSelect(e) {
+        this.setState({
+            offerBook: e.target.value
+        });
+    }
+
+    handleSubmit() {
+
     }
 
     render() {
+        let options;
+        if (this.props.userBooks) {
+            options = this.props.userBooks.map((book) => {
+                return (
+                    <option value={book.id} key={book.id} >
+                        {book.title}
+                    </option>
+                );
+            });
+        }
         return (
             <div>
-                <Button colored onClick={this.requestBook}>Request Book</Button>
+                <Button colored onClick={this.handleOpenDialog}>
+                    Request Book
+                </Button>
+                <Dialog
+                    open={this.state.openDialog}
+                    onCancel={this.handleCloseDialog}>
+                    <DialogTitle>Request "{this.props.title}"</DialogTitle>
+                    <DialogContent>
+                        <label htmlFor="offerBook">
+                            Book to offer:
+                        </label>
+                        <select
+                            value={this.state.offerBook}
+                            onChange={this.handleSelect}
+                            name="offerBook">
+                            {options}
+                        </select>
+                        <Button
+                            raised color ripple
+                            onClick={this.handleSubmit} >
+                            Request
+                        </Button>
+                        <Button
+                            raised color ripple
+                            onClick={this.handleCloseDialog} >
+                            Cancel
+                        </Button>
+                    </DialogContent>
+                </Dialog>
             </div>
         );
     }
