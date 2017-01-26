@@ -120,7 +120,7 @@ class RequestView extends React.Component {
     render() {
         return (
             <div>
-                
+                View
             </div>
         );
     }

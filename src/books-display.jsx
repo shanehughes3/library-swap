@@ -214,12 +214,15 @@ class RequestBookButton extends React.Component {
         super();
         this.state = {
             openDialog: false,
-            offerBook: undefined
+            offerBook: 0,
+            message: "",
+            loading: false
         };
         this.handleOpenDialog = this.handleOpenDialog.bind(this);
         this.handleCloseDialog = this.handleCloseDialog.bind(this);
         this.handleSelect = this.handleSelect.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleResponse = this.handleResponse.bind(this);
     }
 
     handleOpenDialog() {
@@ -235,13 +238,50 @@ class RequestBookButton extends React.Component {
     }
 
     handleSelect(e) {
+        console.log(e);
         this.setState({
             offerBook: e.target.value
         });
     }
 
     handleSubmit() {
+        if (this.state.offerBook === 0) {
+            this.setState({
+                message: "You must select a book to offer"
+            });
+        } else {
+            const payload = {
+                offerBookId: this.state.offerBook,
+                requestedBookId: this.props.id
+            };
+            Ajax.post("/api/requests", payload, this.handleResponse);
+            this.setState({
+                message: "",
+                loading: true
+            });
+        }
+    }
 
+    handleResponse(err, res) {
+        if (err) {
+            this.setState({
+                message: "Sorry, an error occurred",
+                loading: false
+            });
+        } else {
+            if (res.error) {
+                this.setState({
+                    message: res.error,
+                    loading: false
+                });
+            } else {
+                this.setState({
+                    message: "Success!",
+                    loading: false
+                });
+                window.location.href = `/requests/view/${res.id}`;
+            }
+        }
     }
 
     render() {
@@ -272,6 +312,12 @@ class RequestBookButton extends React.Component {
                             value={this.state.offerBook}
                             onChange={this.handleSelect}
                             name="offerBook">
+                            <option
+                                disabled
+                                value="0"
+                                style={{display: "none"}} >
+                                -- select an option --
+                            </option>
                             {options}
                         </select>
                         <Button

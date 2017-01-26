@@ -30574,12 +30574,15 @@
 
 	        _this8.state = {
 	            openDialog: false,
-	            offerBook: undefined
+	            offerBook: 0,
+	            message: "",
+	            loading: false
 	        };
 	        _this8.handleOpenDialog = _this8.handleOpenDialog.bind(_this8);
 	        _this8.handleCloseDialog = _this8.handleCloseDialog.bind(_this8);
 	        _this8.handleSelect = _this8.handleSelect.bind(_this8);
 	        _this8.handleSubmit = _this8.handleSubmit.bind(_this8);
+	        _this8.handleResponse = _this8.handleResponse.bind(_this8);
 	        return _this8;
 	    }
 
@@ -30600,13 +30603,53 @@
 	    }, {
 	        key: "handleSelect",
 	        value: function handleSelect(e) {
+	            console.log(e);
 	            this.setState({
 	                offerBook: e.target.value
 	            });
 	        }
 	    }, {
 	        key: "handleSubmit",
-	        value: function handleSubmit() {}
+	        value: function handleSubmit() {
+	            if (this.state.offerBook === 0) {
+	                this.setState({
+	                    message: "You must select a book to offer"
+	                });
+	            } else {
+	                var payload = {
+	                    offerBookId: this.state.offerBook,
+	                    requestedBookId: this.props.id
+	                };
+	                _ajax.Ajax.post("/api/requests", payload, this.handleResponse);
+	                this.setState({
+	                    message: "",
+	                    loading: true
+	                });
+	            }
+	        }
+	    }, {
+	        key: "handleResponse",
+	        value: function handleResponse(err, res) {
+	            if (err) {
+	                this.setState({
+	                    message: "Sorry, an error occurred",
+	                    loading: false
+	                });
+	            } else {
+	                if (res.error) {
+	                    this.setState({
+	                        message: res.error,
+	                        loading: false
+	                    });
+	                } else {
+	                    this.setState({
+	                        message: "Success!",
+	                        loading: false
+	                    });
+	                    window.location.href = "/requests/view/" + res.id;
+	                }
+	            }
+	        }
 	    }, {
 	        key: "render",
 	        value: function render() {
@@ -30654,6 +30697,14 @@
 	                                value: this.state.offerBook,
 	                                onChange: this.handleSelect,
 	                                name: "offerBook" },
+	                            _react2.default.createElement(
+	                                "option",
+	                                {
+	                                    disabled: true,
+	                                    value: "0",
+	                                    style: { display: "none" } },
+	                                "-- select an option --"
+	                            ),
 	                            options
 	                        ),
 	                        _react2.default.createElement(
@@ -56104,7 +56155,11 @@
 	    _createClass(RequestView, [{
 	        key: "render",
 	        value: function render() {
-	            return _react2.default.createElement("div", null);
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                "View"
+	            );
 	        }
 	    }]);
 
