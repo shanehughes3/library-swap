@@ -167,7 +167,8 @@ exports.newRequest = function(buyerUserId, buyerBookId, sellerBookId, cb) {
                 BuyerUserId: buyerUserId,
                 BuyerBookId: buyerBookId
             }).save()
-                   .then(() => cb(null))  ////////// TODO - create new message?
+                   .then((newRequest) =>
+                       createInitialRequestMessage(newRequest, cb))
                    .catch((err) => cb(err));
         })
         .catch((err) => cb(err)); // catch sellerBook lookup
@@ -225,6 +226,62 @@ exports.changeRequestStatus = function(userId, requestId, newStatus, cb) {
         cb(new Error("Invalid Request"));
     }
 };
+
+/* MESSAGES
+ */
+
+const Message = db.define("Message", {
+    id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    text: Sequelize.STRING(510)
+});
+
+Message.belongsTo(User);
+Message.belongsTo(Request);
+
+function createInitialRequestMessage(newRequest, cb) {
+    
+    Message.build({
+        text: `${newRequest.SellerUser.username} has requested ${newRequest.BuyerBook.title} from ${newRequest.BuyerUser.username} and offered ${newRequest.SellerBook} in exchange.`,
+        RequestId: newRequest.id
+    }).save()
+           .then(() => cb(null, newRequest.id))
+           .catch((err) => cb(err));
+}
+
+exports.getRequestMessages = function(requestId, cb) {
+    Message.findAll({
+        where: {
+            RequestId: requestId
+        }
+    })
+           .then((messages) => cb(null, messages))
+           .catch((err) => cb(err));
+        
+}
+
+exports.newMessage = function(requestId, userId, messageText, cb) {
+    Request.findById(requestId)
+           .then((request) => {
+               if (request.SellerUserId === userId ||
+                   request.BuyerUserId === userId) {
+                   Message.build({
+                       RequestId: requestId,
+                       UserId: userId,
+                       text: messageText
+                   }).save()
+                          .then(() => cb(null))
+                          .catch((err) => cb(err));
+               } else {
+                   cb("Unauthorized");
+               }
+           })
+           .catch((err) => cb(err));
+}
+    
 
 /* CLEANUP
  */

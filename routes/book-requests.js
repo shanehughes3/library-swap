@@ -13,17 +13,21 @@ router.post("/api/requests", function(req, res) {
     // new request submission
     if (req.user && req.body.offerBookId && req.body.requestedBookId) {
         db.newRequest(req.user.id, req.body.offerBookId,
-                      req.body.requestedBookId, function(err) {
+                      req.body.requestedBookId, function(err, newId) {
                           if (err) {
-                              res.json({error: err});
+                              res.json({error: "An error occurred"});
+                              console.log(err);
                           } else {
-                              res.json({success: true});
+                              res.json({
+                                  success: true,
+                                  id: newId
+                              });
                           }
                       });
     } else if (!req.user) {
-        res.json({error: new Error("Unauthorized")});
+        res.json({error: "Unauthorized"});
     } else {
-        res.json({error: new Error("Invalid Request")});
+        res.json({error: "Invalid Request"});
     }
 });
 
@@ -81,9 +85,43 @@ router.put("/api/requests/:requestId", function(req, res) {
                                    }
                                });
     } else if (!req.user) {
-        res.json({error: new Error("Unauthorized")});
+        res.json({error: "Unauthorized"});
     } else {
-        res.json({error: new Error("Invalid Request")});
+        res.json({error: "Invalid Request"});
+    }
+});
+
+router.get("/api/requests/:requestId/messages", function(req, res) {
+    if (req.user) {
+        db.getRequestMessages(req.params.requestId, function(err, messages) {
+            if (err) {
+                res.json({error: err});
+            } else {
+                if (messages[0].Request.SellerUserId === req.user.id ||
+                    messages[0].Request.BuyerUserId === req.user.id) {
+                    res.json({messages: messages});
+                } else {
+                    res.json({error: "Unauthorized"});
+                }
+            }
+        });
+    } else {
+        res.json({error: "Unauthorized"});
+    }
+});
+
+router.post("/api/requests/:requestId/messages", function(req, res) {
+    if (req.user && req.body.message) {
+        db.newMessage(req.params.requestId, req.user.id, req.body.message,
+                      function(err) {
+                          if (err) {
+                              res.json({error: err});
+                          } else {
+                              res.json({success: true});
+                          }
+                      });
+    } else {
+        res.json({error: "Unauthorized"});
     }
 });
 
