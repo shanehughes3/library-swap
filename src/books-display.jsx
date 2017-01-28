@@ -1,8 +1,5 @@
 import React from "react";
-import {Card, CardTitle, CardText, CardActions, CardMenu, Button, Spinner,
-        Tooltip, Icon, Dialog, DialogTitle, DialogContent,
-        DialogActions} from "react-mdl";
-import {SelectField, Option} from "react-mdl-extra";
+import {Card, CardTitle, CardText, CardActions, CardMenu, RaisedButton, RefreshIndicator, FontIcon, Dialog, SelectField, MenuItem, IconButton} from "material-ui";
 import {Ajax} from "./ajax";
 
 export class BooksDisplay extends React.Component {
@@ -76,10 +73,8 @@ export class BooksDisplay extends React.Component {
                 return ( 
                     <Card
                         key={book.id}
-                        shadow={1}
                         className="book-card">
-                    <CardTitle
-                            expand
+                        <CardTitle
                             className="book-title"
                             style={(book.thumbnail) ?
                                    // prevent requests to /null or /undefined
@@ -87,22 +82,21 @@ export class BooksDisplay extends React.Component {
                                                 "no-repeat center" } :
                                    {}
                                   }>
+                            <IconButton
+                                iconClassName="material-icons"
+                                className="tooltip-icon"
+                                tooltip={this.getInfo(book)}>
+                                info_outline
+                            </IconButton>
                         </CardTitle>
                         <CardText>
                             {book.title || ""} {(book.authors) ?
-                                                  "- " + book.authors[0] : ""}
+                                                "- " + book.authors[0] : ""}
                         </CardText>
-                        <CardActions border>
+                        <CardActions>
                             {cardButton}
                         </CardActions>
-                        <CardMenu>
-                            <Tooltip
-                                label={this.getInfo(book)}
-                                className="tooltip-icon"
-                                large >
-                                <Icon name="info_outline" />
-                            </Tooltip>
-                        </CardMenu>
+
                     </Card>
                 );
             });
@@ -154,8 +148,14 @@ class AddBookButton extends React.Component {
     render() {
         return (
             <div>
-                <Button colored onClick={this.addBook}>Add Book</Button>
-                {(this.state.loading) ? <Spinner singleColor /> : null}
+                <RaisedButton
+                    onClick={this.addBook}
+                    label="Add Book" />
+            <RefreshIndicator
+            status={(this.state.loading) ? "loading" : "hide"}
+            left={0}
+            top={0}
+            />
                 {this.state.message}
             </div>
         );
@@ -201,8 +201,13 @@ class DeleteBookButton extends React.Component {
     render() {
         return (
             <div>
-                <Button colored onClick={this.deleteBook}>Remove Book</Button>
-                {(this.state.loading) ? <Spinner singleColor /> : null}
+                <RaisedButton
+                    onClick={this.deleteBook}
+                    label="Remove Book" />
+                <RefreshIndicator
+                    status={(this.state.loading) ? "loading" : "hide"}
+                    top={0}
+                    left={0} />
                 {this.state.message}
             </div>
         );
@@ -289,48 +294,40 @@ class RequestBookButton extends React.Component {
         if (this.props.userBooks) {
             options = this.props.userBooks.map((book) => {
                 return (
-                    <option value={book.id} key={book.id} >
-                        {book.title}
-                    </option>
+                    <MenuItem
+                    value={book.id}
+                    key={book.id}
+                    primaryText={book.title} />
                 );
             });
         }
         return (
             <div>
-                <Button colored onClick={this.handleOpenDialog}>
-                    Request Book
-                </Button>
+                <RaisedButton
+                    onClick={this.handleOpenDialog}
+                    label="Request Book" />
                 <Dialog
                     open={this.state.openDialog}
                     onCancel={this.handleCloseDialog}>
-                    <DialogTitle>Request "{this.props.title}"</DialogTitle>
-                    <DialogContent>
+                    <h3>Request "{this.props.title}"</h3>
+                    <div>
                         <label htmlFor="offerBook">
                             Book to offer:
                         </label>
-                        <select
+                        <SelectField
                             value={this.state.offerBook}
                             onChange={this.handleSelect}
-                            name="offerBook">
-                            <option
-                                disabled
-                                value="0"
-                                style={{display: "none"}} >
-                                -- select an option --
-                            </option>
+                            name="offerBook"
+                            floatingLabelText="Select an option..." >
                             {options}
-                        </select>
-                        <Button
-                            raised color ripple
-                            onClick={this.handleSubmit} >
-                            Request
-                        </Button>
-                        <Button
-                            raised color ripple
-                            onClick={this.handleCloseDialog} >
-                            Cancel
-                        </Button>
-                    </DialogContent>
+                        </SelectField>
+                        <RaisedButton
+                            onClick={this.handleSubmit}
+                            label="Request" />
+                        <RaisedButton
+                            onClick={this.handleCloseDialog}
+                            label="Cancel" />
+                    </div>
                 </Dialog>
             </div>
         );

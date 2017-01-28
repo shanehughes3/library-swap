@@ -125,6 +125,7 @@ class AddBookInterface extends React.Component {
                         {(this.state.loading) ? <Spinner singleColor /> : ""}
                     </div>
                     {closeButton}
+                    {this.state.error}
                 </div>
                 <BooksDisplay
                     books={this.state.books}
