@@ -21945,7 +21945,10 @@
 	                ),
 	                _react2.default.createElement(
 	                    "form",
-	                    { action: "javascript:void(0)", method: "post" },
+	                    {
+	                        action: "javascript:void(0)",
+	                        method: "post",
+	                        onSubmit: this.onSubmit },
 	                    _react2.default.createElement(
 	                        "div",
 	                        null,
@@ -21978,10 +21981,15 @@
 	                            primary: true })
 	                    )
 	                ),
-	                _react2.default.createElement(_materialUi.RefreshIndicator, {
-	                    status: this.state.loading ? "loading" : "hide",
-	                    left: 0,
-	                    top: 0 }),
+	                _react2.default.createElement(
+	                    "div",
+	                    { style: { position: "relative" } },
+	                    " ",
+	                    _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                        status: this.state.loading ? "loading" : "hide",
+	                        left: 0,
+	                        top: 0 })
+	                ),
 	                message
 	            );
 	        }
@@ -22105,7 +22113,10 @@
 	                ),
 	                _react2.default.createElement(
 	                    "form",
-	                    { action: "javascript:void(0)", method: "post" },
+	                    {
+	                        action: "javascript:void(0)",
+	                        method: "post",
+	                        onSubmit: this.onSubmit },
 	                    _react2.default.createElement(
 	                        "div",
 	                        null,

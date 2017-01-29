@@ -78,7 +78,10 @@ export class LoginDialog extends React.Component {
                         iconClassName="material-icons">
                         close</IconButton>
                 </div>    
-                <form action="javascript:void(0)" method="post">
+                <form
+                    action="javascript:void(0)"
+                    method="post"
+                    onSubmit={this.onSubmit} >
                     <div>
                         <TextField
                             onChange={this.handleChange}
@@ -105,10 +108,12 @@ export class LoginDialog extends React.Component {
                             primary />
                     </div>
                 </form>
-                <RefreshIndicator
-                    status={(this.state.loading) ? "loading" : "hide"}
-                    left={0}
-                    top={0} />
+                <div style={{position: "relative"}}> {/* TODO fix positioning for spinner */}
+                    <RefreshIndicator
+                        status={(this.state.loading) ? "loading" : "hide"}
+                        left={0}
+                        top={0} />
+                </div>
                 {message}
             </div>
         );
@@ -204,12 +209,15 @@ export class RegisterDialog extends React.Component {
         }
         return (
             <div className="header-dialog">
-            <div className="header-dialog-close">
-                <IconButton
-                    onTouchTap={this.props.closeDialog}
-            iconClassName="material-icons">close</IconButton>
-            </div>
-                <form action="javascript:void(0)" method="post">
+                <div className="header-dialog-close">
+                    <IconButton
+                        onTouchTap={this.props.closeDialog}
+                        iconClassName="material-icons">close</IconButton>
+                </div>
+                <form
+                    action="javascript:void(0)"
+                    method="post"
+                    onSubmit={this.onSubmit} >
                     <div>
                         <TextField
                             onChange={this.handleChange}
@@ -239,17 +247,17 @@ export class RegisterDialog extends React.Component {
                     </div>
                     <div>
                         <RaisedButton
-            onTouchTap={this.onSubmit}
-            type="submit"
-            label="Register"
+                            onTouchTap={this.onSubmit}
+                            type="submit"
+                            label="Register"
                             primary />
                     </div>
                 </form>
-            <RefreshIndicator
-            status={(this.state.loading) ? "loading" : "hide"}
-            left={0}
-            top={0} />
-            {message}
+                <RefreshIndicator
+                    status={(this.state.loading) ? "loading" : "hide"}
+                    left={0}
+                    top={0} />
+                {message}
             </div>
         );
     }
