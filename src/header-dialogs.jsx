@@ -1,5 +1,5 @@
 import React from "react";
-import {Textfield, Button, IconButton, Spinner} from "react-mdl";
+import {TextField, RaisedButton, IconButton, RefreshIndicator} from "material-ui";
 import {Ajax} from "./ajax";
 
 const postOptions = {
@@ -61,7 +61,7 @@ export class LoginDialog extends React.Component {
         this.setState({ [e.target.name]: e.target.value });
     }
     render() {
-        let message, spinner;
+        let message;
         if (this.state.message) {
             message = (
                 <span className="dialog-message">
@@ -69,44 +69,46 @@ export class LoginDialog extends React.Component {
                 </span>
             );
         }
-        if (this.state.loading) {
-            spinner = (
-                <Spinner singleColor />
-            );
-        }
         return (
             <div className="header-dialog">
-                <IconButton
-                    name="close"
-                    onClick={this.props.closeDialog}
-                    className="header-dialog-close" />
+                <div className="header-dialog-close">
+                    <IconButton
+                        name="close"
+                        onTouchTap={this.props.closeDialog}
+                        iconClassName="material-icons">
+                        close</IconButton>
+                </div>    
                 <form action="javascript:void(0)" method="post">
                     <div>
-                        <Textfield
+                        <TextField
                             onChange={this.handleChange}
-                            label="Username"
+                            hintText="Username"
                             id="username-field"
                             name="username"
                             value={this.state.username}
                             autoFocus />
                     </div>
                     <div>
-                        <Textfield
+                        <TextField
                             onChange={this.handleChange}
-                            label="Password"
+                            hintText="Password"
                             type="password"
                             id="password-field"
                             name="password"
                             value={this.state.password} />
                     </div>
                     <div>
-                        <Button
-                            onClick={this.onSubmit}
-                            raised colored ripple>
-                            Log In</Button>
+                        <RaisedButton
+                            onTouchTap={this.onSubmit}
+                            label="Log In"
+                            type="submit"
+                            primary />
                     </div>
                 </form>
-                {spinner}
+                <RefreshIndicator
+                    status={(this.state.loading) ? "loading" : "hide"}
+                    left={0}
+                    top={0} />
                 {message}
             </div>
         );
@@ -192,7 +194,7 @@ export class RegisterDialog extends React.Component {
     }
     
     render() {
-        let message, spinner;
+        let message;
         if (this.state.message) {
             message = (
                 <span className="dialog-message">
@@ -200,54 +202,54 @@ export class RegisterDialog extends React.Component {
                 </span>
             );
         }
-        if (this.state.loading) {
-            spinner = (
-                <Spinner singleColor />
-            );
-        }
         return (
             <div className="header-dialog">
+            <div className="header-dialog-close">
                 <IconButton
-                    name="close"
-                    onClick={this.props.closeDialog}
-                    className="header-dialog-close" />
+                    onTouchTap={this.props.closeDialog}
+            iconClassName="material-icons">close</IconButton>
+            </div>
                 <form action="javascript:void(0)" method="post">
                     <div>
-                        <Textfield
+                        <TextField
                             onChange={this.handleChange}
-                            label="Username"
+                            hintText="Username"
                             id="username-field"
                             name="username"
                             value={this.state.username}
                             autoFocus />
                     </div>
                     <div>
-                        <Textfield
+                        <TextField
                             onChange={this.handleChange}
-                            label="Password"
+                            hintText="Password"
                             id="password-field"
                             type="password"
                             name="password"
                             value={this.state.password} />
                     </div>
                     <div>
-                        <Textfield
+                        <TextField
                             onChange={this.handleChange}
-                            label="Confirm Password"
+                            hintText="Confirm Password"
                             id="confirm-field"
                             type="password"
                             name="confirm"
                             value={this.state.confirm} />
                     </div>
                     <div>
-                        <Button
-                            onClick={this.onSubmit}
-                            raised colored ripple>
-                            Register</Button>
+                        <RaisedButton
+            onTouchTap={this.onSubmit}
+            type="submit"
+            label="Register"
+                            primary />
                     </div>
                 </form>
-                {spinner}
-                {message}
+            <RefreshIndicator
+            status={(this.state.loading) ? "loading" : "hide"}
+            left={0}
+            top={0} />
+            {message}
             </div>
         );
     }

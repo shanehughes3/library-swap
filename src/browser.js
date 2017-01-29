@@ -7,6 +7,9 @@ import {Books} from "./books.jsx";
 import {Requests} from "./requests.jsx";
 import injectTapEventPlugin from "react-tap-event-plugin";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import {red600} from "material-ui/styles/colors";
+import getMuiTheme from "material-ui/styles/getMuiTheme";
+
 injectTapEventPlugin();
 
 const apps = {
@@ -15,10 +18,16 @@ const apps = {
     "requests": Requests
 };
 
+const muiTheme = getMuiTheme({
+    palette: {
+        primary1Color: red600
+    }
+});
+
 function Wrapper(props) {
     const App = apps[props.element.id];
     return (
-        <MuiThemeProvider>
+        <MuiThemeProvider muiTheme={muiTheme} >
             <App user={props.user} />
         </MuiThemeProvider>
     );

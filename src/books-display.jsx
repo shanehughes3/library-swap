@@ -150,6 +150,7 @@ class AddBookButton extends React.Component {
             <div>
                 <RaisedButton
                     onClick={this.addBook}
+                    primary
                     label="Add Book" />
             <RefreshIndicator
             status={(this.state.loading) ? "loading" : "hide"}
@@ -203,6 +204,7 @@ class DeleteBookButton extends React.Component {
             <div>
                 <RaisedButton
                     onClick={this.deleteBook}
+                    primary
                     label="Remove Book" />
                 <RefreshIndicator
                     status={(this.state.loading) ? "loading" : "hide"}
@@ -305,6 +307,7 @@ class RequestBookButton extends React.Component {
             <div>
                 <RaisedButton
                     onClick={this.handleOpenDialog}
+                    primary
                     label="Request Book" />
                 <Dialog
                     open={this.state.openDialog}
@@ -323,6 +326,7 @@ class RequestBookButton extends React.Component {
                         </SelectField>
                         <RaisedButton
                             onClick={this.handleSubmit}
+                            primary
                             label="Request" />
                         <RaisedButton
                             onClick={this.handleCloseDialog}

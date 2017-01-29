@@ -1,5 +1,5 @@
 import React from "react";
-import {Textfield, Spinner, FABButton, Icon, IconButton} from "react-mdl";
+import {TextField, RefreshIndicator, IconButton} from "material-ui";
 import {Header} from "./header.jsx";
 import {Ajax} from "./ajax";
 import {BooksDisplay} from "./books-display.jsx";
@@ -108,21 +108,23 @@ class AddBookInterface extends React.Component {
         if (this.state.books.length > 0) {
             closeButton = (
                 <IconButton
-                    name="highlight_off"
-                    onClick={this.closeSearch} />
+                    iconClassName="material-icons"
+                    onTouchTap={this.closeSearch}>highlight_off</IconButton>
             );
         }
         return (
             <div>
                 <div className="search-controls">
                     <div className="add-book-search">
-                        <Textfield 
+                        <TextField 
                             onChange={this.onQueryChange}
                             value={this.state.query}
-                            label="Add new book..."
-                            floatingLabel
+                            floatingLabelText="Add new book..."
                             id="add-book-field" />
-                        {(this.state.loading) ? <Spinner singleColor /> : ""}
+                        <RefreshIndicator
+                            status={(this.state.loading) ? "loading" : "hide"}
+                            left={0}
+                            top={0} />
                     </div>
                     {closeButton}
                     {this.state.error}
