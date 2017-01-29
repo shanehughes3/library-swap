@@ -1,5 +1,5 @@
 import React from "react";
-import {Textfield, Spinner, Tabs, Tab} from "react-mdl";
+import {TextField, RefreshIndicator, Tabs, Tab} from "material-ui";
 import {Ajax} from "./ajax";
 import {BooksDisplay} from "./books-display.jsx";
 
@@ -9,23 +9,29 @@ export class SearchArea extends React.Component {
         this.state = {
             activeTab: 0
         };
+        this.changeTab = this.changeTab.bind(this);
+    }
+
+    changeTab(tabId) {
+        this.setState({
+            activeTab: tabId
+        });
     }
 
     render() {
         return (
             <div>
                 <Tabs
-                    activeTab={this.state.activeTab}
-                    onChange={(tabId) => this.setState({ activeTab: tabId })} >
-                    <Tab>Newest Offerings</Tab>
-                    <Tab>Search</Tab>
+                    value={this.state.activeTab}
+                    onChange={this.changeTab}
+                    inkBarStyle={{background: "white", color: "rgba(0,0,0,0,87)"}}>
+                    <Tab label="Newest Offerings" value={0} >
+                        <LatestBooks />
+                    </Tab>
+                    <Tab label="Search" value={1} >
+                        <SearchBooks />
+                    </Tab>
                 </Tabs>
-                <LatestBooks
-                    display={(this.state.activeTab === 0) ?
-                                      "block" : "none" } />
-                <SearchBooks
-                    display={(this.state.activeTab === 1) ?
-                                      "block" : "none" } />
             </div>
         );
     }
@@ -62,11 +68,18 @@ class LatestBooks extends React.Component {
     }
 
     render() {
-        let spinner = null;
-        // spinner before initial book list load only
+        let spinner;
         if (this.state.books.length === 0 &&
             this.state.error === "") {
-            spinner = (<Spinner singleColor />);
+            // spinner before initial list load only
+            spinner = (
+                <div style={{position: "relative"}}>
+                    <RefreshIndicator
+                        status="loading"
+                        left={0}
+                        top={0} />
+                </div>
+            );
         }
         return (
             <div style={{ display: this.props.display }}>
@@ -155,22 +168,32 @@ class SearchBooks extends React.Component {
     }
     
     render() {
-        let message;
+        let message, spinner;
         if (this.state.error) {
             message = this.state.error;
         } else if (this.state.books.length === 0) {
             message = "No results to display";
         }
+
+        if (this.state.loading) {
+            spinner = (
+                <div style={{position: "relative"}}>
+                    <RefreshIndicator
+                        status="loading"
+                        left={0}
+                        top={0} />
+                </div>
+            );
+        }
         return (
             <div style={{ display: this.props.display }}>
-                <Textfield
+                <TextField
                     id="books-search-field"
-                    label="Enter search terms..."
+                    floatingLabelText="Enter search terms..."
                     value={this.state.query}
-                    onChange={this.onQueryChange}
-                    floatingLabel />
+                    onChange={this.onQueryChange} />
                 <div className="middle-message">
-                    {(this.state.loading) ? <Spinner singleColor /> : null}
+                    {spinner}
                     {message}
                 </div>
                     <BooksDisplay
