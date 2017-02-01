@@ -244,10 +244,9 @@ class RequestBookButton extends React.Component {
         });
     }
 
-    handleSelect(e) {
-        console.log(e);
+    handleSelect(event, index, value) {
         this.setState({
-            offerBook: e.target.value
+            offerBook: value
         });
     }
 
@@ -331,6 +330,7 @@ class RequestBookButton extends React.Component {
                         <RaisedButton
                             onClick={this.handleCloseDialog}
                             label="Cancel" />
+                        {this.state.message}
                     </div>
                 </Dialog>
             </div>

@@ -136,3 +136,6 @@ a {
     margin: 20px;
 }
 
+.message {
+    border: 1px solid black;
+}

@@ -173,7 +173,7 @@ exports.newRequest = function(buyerUserId, buyerBookId, sellerBookId, cb) {
         })
         .catch((err) => cb(err)); // catch sellerBook lookup
 };
-
+/*
 exports.viewRequest = function(userId, requestId, cb) {
     Request.findById(requestId)
            .then((request) => {
@@ -187,22 +187,47 @@ exports.viewRequest = function(userId, requestId, cb) {
            })
            .catch((err) => cb(err));
 };
-
+*/
 exports.getIncomingUserRequests = function(userId, cb) {
     Request.findAll({
         where: {
             SellerUserId: userId
-        }
+        },
+        include: [
+            { model: Book, as: "SellerBook" },
+            { model: Book, as: "BuyerBook" }
+        ]
     })
            .then((reqs) => cb(null, reqs))
            .catch((err) => cb(err));
+};
+
+exports.getAllUserRequests = function(userId, cb) {
+    Request.findAll({
+        where: {
+            $or: [
+                { BuyerUserId: userId },
+                { SellerUserId: userId }
+            ]
+        },
+        include: [
+            { model: Book, as: "SellerBook" },
+            { model: Book, as: "BuyerBook" }
+        ]
+    })
+           .then((reqs) => cb(null, reqs))
+           .catch((err) => { cb(err); console.log(err)});
 };
 
 exports.getOutgoingUserRequests = function(userId, cb) {
     Request.findAll({
         where: {
             BuyerUserId: userId
-        }
+        },
+        include: [
+            { model: Book, as: "SellerBook" },
+            { model: Book, as: "BuyerBook" }
+        ]
     })
            .then((reqs) => cb(null, reqs))
            .catch((err) => cb(err));
@@ -243,12 +268,20 @@ Message.belongsTo(User);
 Message.belongsTo(Request);
 
 function createInitialRequestMessage(newRequest, cb) {
-    
-    Message.build({
-        text: `${newRequest.SellerUser.username} has requested ${newRequest.BuyerBook.title} from ${newRequest.BuyerUser.username} and offered ${newRequest.SellerBook} in exchange.`,
-        RequestId: newRequest.id
-    }).save()
-           .then(() => cb(null, newRequest.id))
+    Request.findOne({
+        where: {
+            id: newRequest.id
+        },
+        include: [{ all: true }]
+    })
+           .then((fullNewRequest) => {
+               Message.build({
+                   text: `${fullNewRequest.SellerUser.username} has requested ${fullNewRequest.BuyerBook.title} from ${fullNewRequest.BuyerUser.username} and offered ${fullNewRequest.SellerBook.title} in exchange.`,
+                   RequestId: fullNewRequest.id
+               }).save()
+                      .then(() => cb(null, fullNewRequest.id))
+                      .catch((err) => cb(err));
+           })
            .catch((err) => cb(err));
 }
 
@@ -256,7 +289,10 @@ exports.getRequestMessages = function(requestId, cb) {
     Message.findAll({
         where: {
             RequestId: requestId
-        }
+        },
+        include: [
+            { model: Request }
+        ]
     })
            .then((messages) => cb(null, messages))
            .catch((err) => cb(err));

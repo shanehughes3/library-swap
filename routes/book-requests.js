@@ -31,6 +31,20 @@ router.post("/api/requests", function(req, res) {
     }
 });
 
+router.get("/api/requests", function(req, res) {
+    if (req.user) {
+        db.getAllUserRequests(req.user.id, function(err, requests) {
+            if (err) {
+                res.json({error: err});
+            } else {
+                res.json({requests: requests || []});
+            }
+        });
+    } else {
+        res.json({error: "Unauthorized"});
+    }
+});
+
 router.get("/api/requests/incoming", function(req, res) {
     if (req.user) {
         db.getIncomingUserRequests(req.user.id, function(err, requests) {
@@ -41,7 +55,7 @@ router.get("/api/requests/incoming", function(req, res) {
             }
         });
     } else {
-        res.json({error: new Error("Unauthorized")});
+        res.json({error: "Unauthorized"});
     }
 });
 
@@ -99,7 +113,9 @@ router.get("/api/requests/:requestId/messages", function(req, res) {
             } else {
                 if (messages[0].Request.SellerUserId === req.user.id ||
                     messages[0].Request.BuyerUserId === req.user.id) {
-                    res.json({messages: messages});
+                    res.json({
+                        messages: parseMessagesForUser(messages, req.user.id)
+                    });
                 } else {
                     res.json({error: "Unauthorized"});
                 }
@@ -127,3 +143,17 @@ router.post("/api/requests/:requestId/messages", function(req, res) {
 
 module.exports = router;
       
+function parseMessagesForUser(messages, userId) {
+    if (messages.length > 0) {
+        messages.forEach((message) => {
+            if (message.UserId === userId) {
+                message.source = "self";
+            } else if (message.UserId) {
+                message.source = "other";
+            } else {
+                message.source = "server";
+            }
+        });
+    }
+    return messages;
+}

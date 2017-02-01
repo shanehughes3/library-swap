@@ -1,17 +1,22 @@
 import React from "react";
 import {Router, Route, IndexRoute, Link, browserHistory} from "react-router";
+import {List, ListItem, Avatar, Divider} from "material-ui";
 import {Header} from "./header.jsx";
+import {Ajax} from "./ajax";
 
 export class Requests extends React.Component {
     constructor() {
         super();
     }
+
+
+    
     render() {
         return (
             <Router history={browserHistory}>
                 <Route path="/requests"
                        user={this.props.user}
-                       component={RequestsLayout}>
+                       component={RequestsLayout} >
                     <IndexRoute component={RequestsInbox} />
                     <Route path="incoming" component={RequestsIncoming} />
                     <Route path="outgoing" component={RequestsOutgoing} />
@@ -77,11 +82,32 @@ export class RequestsNav extends React.Component {
 class RequestsInbox extends React.Component {
     constructor() {
         super();
+        this.state = {
+            requests: [],
+            error: ""
+        };
     }
+
+    componentWillMount() {
+        Ajax.get("/api/requests", (err, response) => {
+            if (err || response.error) {
+                this.setState({
+                    error: "An error occurred while retrieving requests"
+                });
+            } else {
+                this.setState({
+                    error: "",
+                    requests: response.requests
+                });
+            }
+        });
+    }
+    
     render() {
         return (
             <div>
-                Home
+                <RequestList requests={this.state.requests} />
+                {this.state.error}
             </div>
         );
     }
@@ -90,11 +116,32 @@ class RequestsInbox extends React.Component {
 class RequestsIncoming extends React.Component {
     constructor() {
         super();
+        this.state = {
+            requests: [],
+            error: ""
+        };
     }
+
+    componentWillMount() {
+        Ajax.get("/api/requests/incoming", (err, response) => {
+            if (err || response.error) {
+                this.setState({
+                    error: "An error occurred while retrieving requests"
+                });
+            } else {
+                this.setState({
+                    error: "",
+                    requests: response.requests
+                });
+            }
+        });
+    }
+
     render() {
         return (
             <div>
-                Incoming
+                <RequestList requests={this.state.requests} />
+                {this.state.error}
             </div>
         );
     }
@@ -103,11 +150,32 @@ class RequestsIncoming extends React.Component {
 class RequestsOutgoing extends React.Component {
     constructor() {
         super();
+        this.state = {
+            requests: [],
+            error: ""
+        };
     }
+
+    componentWillMount() {
+        Ajax.get("/api/requests/outgoing", (err, response) => {
+            if (err) { 
+                this.setState({
+                    error: "An error occurred while retrieving requests" 
+                }); 
+            } else {
+                this.setState({
+                    error: "",
+                    requests: response.requests 
+                });
+            } 
+        });
+    }
+    
     render() {
         return (
             <div>
-                Outgoing
+                <RequestList requests={this.state.requests} />
+                {this.state.error}
             </div>
         );
     }
@@ -116,11 +184,99 @@ class RequestsOutgoing extends React.Component {
 class RequestView extends React.Component {
     constructor() {
         super();
+        this.state = {
+            messages: [],
+            error: ""
+        };
     }
+
+    componentWillMount() {
+        Ajax.get(`/api/requests/${this.props.params.id}/messages`,
+                 (err, response) => {
+                     if (err || response.error) {
+                         this.setState({
+                             error: "Sorry, an error occurred"
+                         });
+                     } else {
+                         this.setState({
+                             error: "",
+                             messages: response.messages
+                         });
+                     }
+                 });
+    }
+    
     render() {
         return (
             <div>
-                View
+                <MessageList messages={this.state.messages} />
+                {this.state.error}
+            </div>
+        );
+    }
+}
+
+class RequestList extends React.Component {
+    constructor() {
+        super();
+    }
+    render() {
+        let listItems;
+        if (this.props.requests && this.props.requests.length > 0) {
+            listItems = this.props.requests.map((request) => {
+                return (
+                    <Link to={`/requests/view/${request.id}`} key={request.id} >
+                        <ListItem
+                            leftAvatar={
+                                <Avatar
+                                    src={request.SellerBook.thumbnail || ""} />
+                            }
+                            primaryText={request.SellerBook.title}
+                            secondaryText={`Offer: ${request.BuyerBook.title}`}
+                            secondaryTextLines={1} />
+                    </Link>
+                );
+            });
+        }
+
+        return (
+            <div>
+                <List>
+                    {listItems}
+                </List>
+            </div>
+        );
+    }
+}
+
+class MessageList extends React.Component {
+    constructor() {
+        super();
+    }
+
+    render() {
+        let listItems;
+        if (this.props.messages && this.props.messages.length > 0) {
+            listItems = this.props.messages.map((message) => {
+                const align = (message.source === "self") ? "right" : "left";
+                const width = (message.source === "server") ? "100%" : "70%";
+                return (
+                    <div
+                        style={{
+                            float: align,
+                            textAlign: align,
+                            width: width
+                        }}
+                        className="message"
+                        key={message.id} >
+                        {message.text}
+                    </div>
+                );
+            });
+        }
+        return (
+            <div>
+                {listItems}
             </div>
         );
     }
