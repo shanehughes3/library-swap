@@ -1,6 +1,6 @@
 import React from "react";
 import {Router, Route, IndexRoute, Link, browserHistory} from "react-router";
-import {List, ListItem, Avatar, Divider} from "material-ui";
+import {List, ListItem, Avatar, Divider, TextField, RaisedButton, RefreshIndicator} from "material-ui";
 import {Header} from "./header.jsx";
 import {Ajax} from "./ajax";
 
@@ -188,9 +188,14 @@ class RequestView extends React.Component {
             messages: [],
             error: ""
         };
+        this.refreshMessages = this.refreshMessages.bind(this);
     }
 
     componentWillMount() {
+        this.refreshMessages();
+    }
+
+    refreshMessages() {
         Ajax.get(`/api/requests/${this.props.params.id}/messages`,
                  (err, response) => {
                      if (err || response.error) {
@@ -209,6 +214,10 @@ class RequestView extends React.Component {
     render() {
         return (
             <div>
+                <NewMessageDialog
+                    requestId={this.props.params.id}
+                    refresh={this.refreshMessages}
+                />
                 <MessageList messages={this.state.messages} />
                 {this.state.error}
             </div>
@@ -244,6 +253,90 @@ class RequestList extends React.Component {
                 <List>
                     {listItems}
                 </List>
+            </div>
+        );
+    }
+}
+
+class NewMessageDialog extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            messageText: "",
+            statusMessage: "",
+            loading: false
+        };
+        this.sendMessage = this.sendMessage.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+    }
+
+    sendMessage() {
+        const {messageText} = this.state;
+        this.setState({
+            loading: true,
+            statusMessage: ""
+        });
+        Ajax.post(`/api/requests/${this.props.requestId}/messages`,
+                  { message: messageText },
+                  (err, response) => {
+                      if (err || response.error) {
+                          this.setState({
+                              loading: false,
+                              statusMessage: "Sorry, an error occurred"
+                          });
+                      } else {
+                          this.setState({
+                              loading: false,
+                              statusMessage: "",
+                              messageText: ""
+                          });
+                          this.props.refresh();
+                      }
+                  });
+    }
+
+    handleChange(e) {
+        if (e.target.value.length <= 500) {
+            this.setState({
+                messageText: e.target.value
+            });
+        }
+    }
+
+    render() {
+        let buttonOrSpinner;
+        if (this.state.loading) {
+            buttonOrSpinner = (
+                <RefreshIndicator
+                    status="loading"
+                    left={0}
+                    top={0}
+                />
+            );
+        } else {
+            buttonOrSpinner = (
+                <RaisedButton
+                    onClick={this.sendMessage}
+                    primary
+                    label="Send Message"
+                />
+            );
+        }
+        
+        return (
+            <div>
+                <TextField
+                    hintText="Send a message"
+                    multiLine={true}
+                    rows={2}
+                    rowsMax={4}
+                    value={this.state.messageText}
+                    onChange={this.handleChange}
+                />
+                <span className="message-chars-remaining" >
+                    {500 - this.state.messageText.length} characters remaining
+                </span>
+                {buttonOrSpinner}
             </div>
         );
     }

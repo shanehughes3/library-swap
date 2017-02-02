@@ -276,7 +276,7 @@ function createInitialRequestMessage(newRequest, cb) {
     })
            .then((fullNewRequest) => {
                Message.build({
-                   text: `${fullNewRequest.SellerUser.username} has requested ${fullNewRequest.BuyerBook.title} from ${fullNewRequest.BuyerUser.username} and offered ${fullNewRequest.SellerBook.title} in exchange.`,
+                   text: `${fullNewRequest.BuyerUser.username} has requested ${fullNewRequest.SellerBook.title} from ${fullNewRequest.SellerUser.username} and offered ${fullNewRequest.BuyerBook.title} in exchange.`,
                    RequestId: fullNewRequest.id
                }).save()
                       .then(() => cb(null, fullNewRequest.id))

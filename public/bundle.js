@@ -62772,12 +62772,18 @@
 	            messages: [],
 	            error: ""
 	        };
+	        _this11.refreshMessages = _this11.refreshMessages.bind(_this11);
 	        return _this11;
 	    }
 
 	    _createClass(RequestView, [{
 	        key: "componentWillMount",
 	        value: function componentWillMount() {
+	            this.refreshMessages();
+	        }
+	    }, {
+	        key: "refreshMessages",
+	        value: function refreshMessages() {
 	            var _this12 = this;
 
 	            _ajax.Ajax.get("/api/requests/" + this.props.params.id + "/messages", function (err, response) {
@@ -62799,6 +62805,10 @@
 	            return _react2.default.createElement(
 	                "div",
 	                null,
+	                _react2.default.createElement(NewMessageDialog, {
+	                    requestId: this.props.params.id,
+	                    refresh: this.refreshMessages
+	                }),
 	                _react2.default.createElement(MessageList, { messages: this.state.messages }),
 	                this.state.error
 	            );
@@ -62851,8 +62861,105 @@
 	    return RequestList;
 	}(_react2.default.Component);
 
-	var MessageList = function (_React$Component9) {
-	    _inherits(MessageList, _React$Component9);
+	var NewMessageDialog = function (_React$Component9) {
+	    _inherits(NewMessageDialog, _React$Component9);
+
+	    function NewMessageDialog() {
+	        _classCallCheck(this, NewMessageDialog);
+
+	        var _this14 = _possibleConstructorReturn(this, (NewMessageDialog.__proto__ || Object.getPrototypeOf(NewMessageDialog)).call(this));
+
+	        _this14.state = {
+	            messageText: "",
+	            statusMessage: "",
+	            loading: false
+	        };
+	        _this14.sendMessage = _this14.sendMessage.bind(_this14);
+	        _this14.handleChange = _this14.handleChange.bind(_this14);
+	        return _this14;
+	    }
+
+	    _createClass(NewMessageDialog, [{
+	        key: "sendMessage",
+	        value: function sendMessage() {
+	            var _this15 = this;
+
+	            var messageText = this.state.messageText;
+
+	            this.setState({
+	                loading: true,
+	                statusMessage: ""
+	            });
+	            _ajax.Ajax.post("/api/requests/" + this.props.requestId + "/messages", { message: messageText }, function (err, response) {
+	                if (err || response.error) {
+	                    _this15.setState({
+	                        loading: false,
+	                        statusMessage: "Sorry, an error occurred"
+	                    });
+	                } else {
+	                    _this15.setState({
+	                        loading: false,
+	                        statusMessage: "",
+	                        messageText: ""
+	                    });
+	                    _this15.props.refresh();
+	                }
+	            });
+	        }
+	    }, {
+	        key: "handleChange",
+	        value: function handleChange(e) {
+	            if (e.target.value.length <= 500) {
+	                this.setState({
+	                    messageText: e.target.value
+	                });
+	            }
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var buttonOrSpinner = void 0;
+	            if (this.state.loading) {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                    status: "loading",
+	                    left: 0,
+	                    top: 0
+	                });
+	            } else {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RaisedButton, {
+	                    onClick: this.sendMessage,
+	                    primary: true,
+	                    label: "Send Message"
+	                });
+	            }
+
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(_materialUi.TextField, {
+	                    hintText: "Send a message",
+	                    multiLine: true,
+	                    rows: 2,
+	                    rowsMax: 4,
+	                    value: this.state.messageText,
+	                    onChange: this.handleChange
+	                }),
+	                _react2.default.createElement(
+	                    "span",
+	                    { className: "message-chars-remaining" },
+	                    500 - this.state.messageText.length,
+	                    " characters remaining"
+	                ),
+	                buttonOrSpinner
+	            );
+	        }
+	    }]);
+
+	    return NewMessageDialog;
+	}(_react2.default.Component);
+
+	var MessageList = function (_React$Component10) {
+	    _inherits(MessageList, _React$Component10);
 
 	    function MessageList() {
 	        _classCallCheck(this, MessageList);

@@ -136,8 +136,10 @@ router.post("/api/requests/:requestId/messages", function(req, res) {
                               res.json({success: true});
                           }
                       });
-    } else {
+    } else if (!req.user) {
         res.json({error: "Unauthorized"});
+    } else {
+        res.json({error: "Invalid Request"});
     }
 });
 

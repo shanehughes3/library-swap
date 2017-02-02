@@ -152,11 +152,11 @@ class AddBookButton extends React.Component {
                     onClick={this.addBook}
                     primary
                     label="Add Book" />
-            <RefreshIndicator
-            status={(this.state.loading) ? "loading" : "hide"}
-            left={0}
-            top={0}
-            />
+                <RefreshIndicator
+                    status={(this.state.loading) ? "loading" : "hide"}
+                    left={0}
+                    top={0}
+                />
                 {this.state.message}
             </div>
         );
