@@ -74,6 +74,40 @@ export class Ajax {
         xhr.send(null);
     }
 
+    /**
+     * Send a PUT request
+     * @param {string} endpoint - The request endpoint
+     * @param {Object} payload - The request body payload
+     * @param {Object} [options] - The options for the particular request
+     * @param {string} [options.contentType] - The "Content-Type" header for the request, minus the "application/" prefix. Can be either "json" or "x-www-form-urlencoded". Defaults to "json".
+     * @param {requestCallback} cb - The callback that handles the response or error
+     */
+    static put(endpoint, payload, options, cb) {
+        if (typeof options == "function") {
+            cb = options;
+            options = {};
+        }
+        const defaults = {
+            contentType: "json"
+        };
+        options = Object.assign({}, defaults, options);
+        
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener("load", () =>
+            this.parseResponse(xhr.responseText, cb));
+        xhr.addEventListener("error", (err) => cb(err));
+        xhr.addEventListener("abort", () => cb("abort"));
+        xhr.open("PUT", endpoint);
+        xhr.setRequestHeader("Content-Type",
+                             `application/${options.contentType}`);
+        if (options.contentType === "x-www-form-urlencoded") {
+            payload = this.formEncode(payload);
+        } else if (options.contentType === "json") {
+            payload = JSON.stringify(payload);
+        }
+        xhr.send(payload);
+    }
+
     static parseResponse(res, cb) {
         let err, responseObj;
         try {

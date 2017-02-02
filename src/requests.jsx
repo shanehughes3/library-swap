@@ -267,7 +267,8 @@ class RequestHeaderForMessages extends React.Component {
         super();
         this.state = {
             request: null,
-            error: ""
+            loadError: "",
+            requestError: ""
         };
     }
 
@@ -279,20 +280,38 @@ class RequestHeaderForMessages extends React.Component {
         Ajax.get(`/api/requests/${this.props.requestId}`, (err, response) => {
             if (err || response.error) {
                 this.setState({
-                    error: "Sorry, an error occurred"
+                    loadError: "Sorry, an error occurred"
                 });
             } else {
                 this.setState({
-                    error: "",
+                    loadError: "",
                     request: response.request
                 });
             }
         });
     }
 
+    sendStatusChange(status) {
+        this.setState({
+            loadError: ""
+        });
+        Ajax.put(`/api/requests/${this.props.requestId}`, {status: status},
+                 (err, response) => {
+                     if (err || response.error) {
+                         this.setState({
+                             loadError: "Sorry, an error occurred"
+                         });
+                     } else {
+                         this.getRequest();
+                         this.props.refreshMessages();
+                     }
+                 });
+    }
+
     render() {
         let content;
-        if (!this.state.request && !this.state.error) {
+        if (!this.state.request && !this.state.loadError) {
+            // while ajax call is still loading
             content = (
                 <div style={{textAlign: "center", width: "100%"}}>
                     <RefreshIndicator
@@ -303,14 +322,44 @@ class RequestHeaderForMessages extends React.Component {
                 </div>
             );
         } else if (this.state.request) {
+            // after load
+            let interfaceButtons;
+            if (this.state.request.source === "self" &&
+                this.state.request.status === "open") {
+                // user is buyer
+                interfaceButtons = (
+                    <RaisedButton
+                        onClick={() => this.sendStatusChange("withdrawn")}
+                        label="Cancel Request"
+                    />
+                );
+            } else if (this.state.request.status === "open") {
+                // user is seller
+                interfaceButtons = (
+                    <span>
+                    <RaisedButton
+                        onClick={() => this.sendStatusChange("accepted")}
+                    label="Accept"
+                    />
+                    <RaisedButton
+                        onClick={() => this.sendStatusChange("rejected")}
+                        label="Decline"
+                    />
+                    </span>
+                );
+            }
+            
             content = (
+                <span>
                 <RequestList requests={ [this.state.request] } />
+                {interfaceButtons}
+                </span>
             );
         }
         return (
             <div>
                 {content}
-                {this.state.error}
+                {this.state.loadError}
             </div>
         );
     }

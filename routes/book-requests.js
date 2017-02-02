@@ -80,7 +80,11 @@ router.get("/api/requests/:requestId", function(req, res) {
                            if (err) {
                                res.json({error: err});
                            } else {
-                               res.json({request: request});
+                               res.json({
+                                   request:
+                                           parseRequestForUser(request,
+                                                               req.user.id)
+                               });
                            }
                        });
     } else {
@@ -90,7 +94,8 @@ router.get("/api/requests/:requestId", function(req, res) {
 
 router.put("/api/requests/:requestId", function(req, res) {
     if (req.user && req.body.status) {
-        db.changeRequestStatus(req.user.id, req.params.requestId,
+        db.changeRequestStatus(req.user.id, req.user.username,
+                               req.params.requestId,
                                req.body.status, function(err) {
                                    if (err) {
                                        res.json({error: err});
@@ -160,4 +165,20 @@ function parseMessagesForUser(messages, userId) {
         });
     }
     return messages;
+}
+
+function parseRequestForUser(request, userId) {
+    if (request) {
+        request = request.get({plain: true});
+        if (request.BuyerUserId === userId) {
+            request.source = "self";
+        } else {
+            request.source = "other";
+        }
+        delete request.SellerBookId;
+        delete request.BuyerBookId;
+        delete request.SellerUserId;
+        delete request.BuyerUserId;
+    }
+    return request;
 }

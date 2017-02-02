@@ -241,14 +241,17 @@ exports.getOutgoingUserRequests = function(userId, cb) {
            .catch((err) => cb(err));
 };
 
-exports.changeRequestStatus = function(userId, requestId, newStatus, cb) {
+exports.changeRequestStatus = function(userId, username, requestId,
+                                       newStatus, cb) {
     if (["accepted", "rejected", "withdrawn"].includes(newStatus)) {
         Request.findById(requestId)
                .then((request) => {
                    if (userId === request.SellerUserId) {
                        request.status = newStatus;
                        request.save()
-                              .then(() => cb(null))
+                              .then(() =>
+                                  createUpdateRequestMessage(request, username,
+                                                             cb))
                               .catch((err) => cb(err));
                    } else {
                        cb(new Error("Unauthorized"));
@@ -291,6 +294,16 @@ function createInitialRequestMessage(newRequest, cb) {
                       .catch((err) => cb(err));
            })
            .catch((err) => cb(err));
+}
+
+function createUpdateRequestMessage(request, username, cb) {
+    Message.build({
+        text: `${username} has ${request.status} this request`,
+        RequestId: request.id
+    }).save()
+           .then(() => cb(null))
+           .catch((err) => cb(err));
+
 }
 
 exports.getRequestMessages = function(requestId, cb) {

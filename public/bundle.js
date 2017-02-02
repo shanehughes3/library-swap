@@ -61394,6 +61394,49 @@
 	            xhr.open("DELETE", endpoint);
 	            xhr.send(null);
 	        }
+
+	        /**
+	         * Send a PUT request
+	         * @param {string} endpoint - The request endpoint
+	         * @param {Object} payload - The request body payload
+	         * @param {Object} [options] - The options for the particular request
+	         * @param {string} [options.contentType] - The "Content-Type" header for the request, minus the "application/" prefix. Can be either "json" or "x-www-form-urlencoded". Defaults to "json".
+	         * @param {requestCallback} cb - The callback that handles the response or error
+	         */
+
+	    }, {
+	        key: "put",
+	        value: function put(endpoint, payload, options, cb) {
+	            var _this4 = this;
+
+	            if (typeof options == "function") {
+	                cb = options;
+	                options = {};
+	            }
+	            var defaults = {
+	                contentType: "json"
+	            };
+	            options = Object.assign({}, defaults, options);
+
+	            var xhr = new XMLHttpRequest();
+	            xhr.addEventListener("load", function () {
+	                return _this4.parseResponse(xhr.responseText, cb);
+	            });
+	            xhr.addEventListener("error", function (err) {
+	                return cb(err);
+	            });
+	            xhr.addEventListener("abort", function () {
+	                return cb("abort");
+	            });
+	            xhr.open("PUT", endpoint);
+	            xhr.setRequestHeader("Content-Type", "application/" + options.contentType);
+	            if (options.contentType === "x-www-form-urlencoded") {
+	                payload = this.formEncode(payload);
+	            } else if (options.contentType === "json") {
+	                payload = JSON.stringify(payload);
+	            }
+	            xhr.send(payload);
+	        }
 	    }, {
 	        key: "parseResponse",
 	        value: function parseResponse(res, cb) {
@@ -62875,7 +62918,8 @@
 
 	        _this14.state = {
 	            request: null,
-	            error: ""
+	            loadError: "",
+	            requestError: ""
 	        };
 	        return _this14;
 	    }
@@ -62893,21 +62937,43 @@
 	            _ajax.Ajax.get("/api/requests/" + this.props.requestId, function (err, response) {
 	                if (err || response.error) {
 	                    _this15.setState({
-	                        error: "Sorry, an error occurred"
+	                        loadError: "Sorry, an error occurred"
 	                    });
 	                } else {
 	                    _this15.setState({
-	                        error: "",
+	                        loadError: "",
 	                        request: response.request
 	                    });
 	                }
 	            });
 	        }
 	    }, {
+	        key: "sendStatusChange",
+	        value: function sendStatusChange(status) {
+	            var _this16 = this;
+
+	            this.setState({
+	                loadError: ""
+	            });
+	            _ajax.Ajax.put("/api/requests/" + this.props.requestId, { status: status }, function (err, response) {
+	                if (err || response.error) {
+	                    _this16.setState({
+	                        loadError: "Sorry, an error occurred"
+	                    });
+	                } else {
+	                    _this16.getRequest();
+	                    _this16.props.refreshMessages();
+	                }
+	            });
+	        }
+	    }, {
 	        key: "render",
 	        value: function render() {
+	            var _this17 = this;
+
 	            var content = void 0;
-	            if (!this.state.request && !this.state.error) {
+	            if (!this.state.request && !this.state.loadError) {
+	                // while ajax call is still loading
 	                content = _react2.default.createElement(
 	                    "div",
 	                    { style: { textAlign: "center", width: "100%" } },
@@ -62918,13 +62984,48 @@
 	                    })
 	                );
 	            } else if (this.state.request) {
-	                content = _react2.default.createElement(RequestList, { requests: [this.state.request] });
+	                // after load
+	                var interfaceButtons = void 0;
+	                if (this.state.request.source === "self" && this.state.request.status === "open") {
+	                    // user is buyer
+	                    interfaceButtons = _react2.default.createElement(_materialUi.RaisedButton, {
+	                        onClick: function onClick() {
+	                            return _this17.sendStatusChange("withdrawn");
+	                        },
+	                        label: "Cancel Request"
+	                    });
+	                } else if (this.state.request.status === "open") {
+	                    // user is seller
+	                    interfaceButtons = _react2.default.createElement(
+	                        "span",
+	                        null,
+	                        _react2.default.createElement(_materialUi.RaisedButton, {
+	                            onClick: function onClick() {
+	                                return _this17.sendStatusChange("accepted");
+	                            },
+	                            label: "Accept"
+	                        }),
+	                        _react2.default.createElement(_materialUi.RaisedButton, {
+	                            onClick: function onClick() {
+	                                return _this17.sendStatusChange("rejected");
+	                            },
+	                            label: "Decline"
+	                        })
+	                    );
+	                }
+
+	                content = _react2.default.createElement(
+	                    "span",
+	                    null,
+	                    _react2.default.createElement(RequestList, { requests: [this.state.request] }),
+	                    interfaceButtons
+	                );
 	            }
 	            return _react2.default.createElement(
 	                "div",
 	                null,
 	                content,
-	                this.state.error
+	                this.state.loadError
 	            );
 	        }
 	    }]);
@@ -62938,22 +63039,22 @@
 	    function NewMessageDialog() {
 	        _classCallCheck(this, NewMessageDialog);
 
-	        var _this16 = _possibleConstructorReturn(this, (NewMessageDialog.__proto__ || Object.getPrototypeOf(NewMessageDialog)).call(this));
+	        var _this18 = _possibleConstructorReturn(this, (NewMessageDialog.__proto__ || Object.getPrototypeOf(NewMessageDialog)).call(this));
 
-	        _this16.state = {
+	        _this18.state = {
 	            messageText: "",
 	            statusMessage: "",
 	            loading: false
 	        };
-	        _this16.sendMessage = _this16.sendMessage.bind(_this16);
-	        _this16.handleChange = _this16.handleChange.bind(_this16);
-	        return _this16;
+	        _this18.sendMessage = _this18.sendMessage.bind(_this18);
+	        _this18.handleChange = _this18.handleChange.bind(_this18);
+	        return _this18;
 	    }
 
 	    _createClass(NewMessageDialog, [{
 	        key: "sendMessage",
 	        value: function sendMessage() {
-	            var _this17 = this;
+	            var _this19 = this;
 
 	            var messageText = this.state.messageText;
 
@@ -62963,17 +63064,17 @@
 	            });
 	            _ajax.Ajax.post("/api/requests/" + this.props.requestId + "/messages", { message: messageText }, function (err, response) {
 	                if (err || response.error) {
-	                    _this17.setState({
+	                    _this19.setState({
 	                        loading: false,
 	                        statusMessage: "Sorry, an error occurred"
 	                    });
 	                } else {
-	                    _this17.setState({
+	                    _this19.setState({
 	                        loading: false,
 	                        statusMessage: "",
 	                        messageText: ""
 	                    });
-	                    _this17.props.refresh();
+	                    _this19.props.refresh();
 	                }
 	            });
 	        }
