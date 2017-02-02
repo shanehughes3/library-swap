@@ -142,7 +142,7 @@ const Request = db.define("Request", {
         autoIncrement: true,
         primaryKey: true
     },
-    status: {   // status should be "open," "accepted," or "rejected"
+    status: { // status should be "open," "accepted," "withdrawn", or "rejected"
         type: Sequelize.STRING,
                 allowNull: false,
                 defaultValue: "open"
@@ -173,9 +173,17 @@ exports.newRequest = function(buyerUserId, buyerBookId, sellerBookId, cb) {
         })
         .catch((err) => cb(err)); // catch sellerBook lookup
 };
-/*
+
 exports.viewRequest = function(userId, requestId, cb) {
-    Request.findById(requestId)
+    Request.findOne({
+        where: {
+            id: requestId
+        },
+        include: [
+            { model: Book, as: "SellerBook" },
+            { model: Book, as: "BuyerBook" }
+        ]
+    })
            .then((request) => {
                if (userId === request.SellerUserId ||
                    userId === request.BuyerUserId) {
@@ -187,7 +195,7 @@ exports.viewRequest = function(userId, requestId, cb) {
            })
            .catch((err) => cb(err));
 };
-*/
+
 exports.getIncomingUserRequests = function(userId, cb) {
     Request.findAll({
         where: {
@@ -234,7 +242,7 @@ exports.getOutgoingUserRequests = function(userId, cb) {
 };
 
 exports.changeRequestStatus = function(userId, requestId, newStatus, cb) {
-    if (["accepted", "rejected"].includes(newStatus)) {
+    if (["accepted", "rejected", "withdrawn"].includes(newStatus)) {
         Request.findById(requestId)
                .then((request) => {
                    if (userId === request.SellerUserId) {
@@ -292,6 +300,9 @@ exports.getRequestMessages = function(requestId, cb) {
         },
         include: [
             { model: Request }
+        ],
+        order: [
+            ["createdAt", "DESC"]
         ]
     })
            .then((messages) => cb(null, messages))

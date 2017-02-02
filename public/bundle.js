@@ -62805,6 +62805,10 @@
 	            return _react2.default.createElement(
 	                "div",
 	                null,
+	                _react2.default.createElement(RequestHeaderForMessages, {
+	                    requestId: this.props.params.id,
+	                    refreshMessages: this.refreshMessages
+	                }),
 	                _react2.default.createElement(NewMessageDialog, {
 	                    requestId: this.props.params.id,
 	                    refresh: this.refreshMessages
@@ -62861,28 +62865,95 @@
 	    return RequestList;
 	}(_react2.default.Component);
 
-	var NewMessageDialog = function (_React$Component9) {
-	    _inherits(NewMessageDialog, _React$Component9);
+	var RequestHeaderForMessages = function (_React$Component9) {
+	    _inherits(RequestHeaderForMessages, _React$Component9);
+
+	    function RequestHeaderForMessages() {
+	        _classCallCheck(this, RequestHeaderForMessages);
+
+	        var _this14 = _possibleConstructorReturn(this, (RequestHeaderForMessages.__proto__ || Object.getPrototypeOf(RequestHeaderForMessages)).call(this));
+
+	        _this14.state = {
+	            request: null,
+	            error: ""
+	        };
+	        return _this14;
+	    }
+
+	    _createClass(RequestHeaderForMessages, [{
+	        key: "componentWillMount",
+	        value: function componentWillMount() {
+	            this.getRequest();
+	        }
+	    }, {
+	        key: "getRequest",
+	        value: function getRequest() {
+	            var _this15 = this;
+
+	            _ajax.Ajax.get("/api/requests/" + this.props.requestId, function (err, response) {
+	                if (err || response.error) {
+	                    _this15.setState({
+	                        error: "Sorry, an error occurred"
+	                    });
+	                } else {
+	                    _this15.setState({
+	                        error: "",
+	                        request: response.request
+	                    });
+	                }
+	            });
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var content = void 0;
+	            if (!this.state.request && !this.state.error) {
+	                content = _react2.default.createElement(
+	                    "div",
+	                    { style: { textAlign: "center", width: "100%" } },
+	                    _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                        status: "loading",
+	                        left: 0,
+	                        top: 0
+	                    })
+	                );
+	            } else if (this.state.request) {
+	                content = _react2.default.createElement(RequestList, { requests: [this.state.request] });
+	            }
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                content,
+	                this.state.error
+	            );
+	        }
+	    }]);
+
+	    return RequestHeaderForMessages;
+	}(_react2.default.Component);
+
+	var NewMessageDialog = function (_React$Component10) {
+	    _inherits(NewMessageDialog, _React$Component10);
 
 	    function NewMessageDialog() {
 	        _classCallCheck(this, NewMessageDialog);
 
-	        var _this14 = _possibleConstructorReturn(this, (NewMessageDialog.__proto__ || Object.getPrototypeOf(NewMessageDialog)).call(this));
+	        var _this16 = _possibleConstructorReturn(this, (NewMessageDialog.__proto__ || Object.getPrototypeOf(NewMessageDialog)).call(this));
 
-	        _this14.state = {
+	        _this16.state = {
 	            messageText: "",
 	            statusMessage: "",
 	            loading: false
 	        };
-	        _this14.sendMessage = _this14.sendMessage.bind(_this14);
-	        _this14.handleChange = _this14.handleChange.bind(_this14);
-	        return _this14;
+	        _this16.sendMessage = _this16.sendMessage.bind(_this16);
+	        _this16.handleChange = _this16.handleChange.bind(_this16);
+	        return _this16;
 	    }
 
 	    _createClass(NewMessageDialog, [{
 	        key: "sendMessage",
 	        value: function sendMessage() {
-	            var _this15 = this;
+	            var _this17 = this;
 
 	            var messageText = this.state.messageText;
 
@@ -62892,17 +62963,17 @@
 	            });
 	            _ajax.Ajax.post("/api/requests/" + this.props.requestId + "/messages", { message: messageText }, function (err, response) {
 	                if (err || response.error) {
-	                    _this15.setState({
+	                    _this17.setState({
 	                        loading: false,
 	                        statusMessage: "Sorry, an error occurred"
 	                    });
 	                } else {
-	                    _this15.setState({
+	                    _this17.setState({
 	                        loading: false,
 	                        statusMessage: "",
 	                        messageText: ""
 	                    });
-	                    _this15.props.refresh();
+	                    _this17.props.refresh();
 	                }
 	            });
 	        }
@@ -62958,8 +63029,8 @@
 	    return NewMessageDialog;
 	}(_react2.default.Component);
 
-	var MessageList = function (_React$Component10) {
-	    _inherits(MessageList, _React$Component10);
+	var MessageList = function (_React$Component11) {
+	    _inherits(MessageList, _React$Component11);
 
 	    function MessageList() {
 	        _classCallCheck(this, MessageList);

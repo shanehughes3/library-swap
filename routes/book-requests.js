@@ -147,7 +147,9 @@ module.exports = router;
       
 function parseMessagesForUser(messages, userId) {
     if (messages.length > 0) {
+        messages = messages.map((message) => message.get({plain: true}));
         messages.forEach((message) => {
+            delete message.Request;
             if (message.UserId === userId) {
                 message.source = "self";
             } else if (message.UserId) {

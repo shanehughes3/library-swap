@@ -214,6 +214,10 @@ class RequestView extends React.Component {
     render() {
         return (
             <div>
+                <RequestHeaderForMessages
+                    requestId={this.props.params.id}
+                    refreshMessages={this.refreshMessages}
+                />
                 <NewMessageDialog
                     requestId={this.props.params.id}
                     refresh={this.refreshMessages}
@@ -253,6 +257,60 @@ class RequestList extends React.Component {
                 <List>
                     {listItems}
                 </List>
+            </div>
+        );
+    }
+}
+
+class RequestHeaderForMessages extends React.Component {
+    constructor() {
+        super();
+        this.state = {
+            request: null,
+            error: ""
+        };
+    }
+
+    componentWillMount() {
+        this.getRequest();
+    }
+
+    getRequest() {
+        Ajax.get(`/api/requests/${this.props.requestId}`, (err, response) => {
+            if (err || response.error) {
+                this.setState({
+                    error: "Sorry, an error occurred"
+                });
+            } else {
+                this.setState({
+                    error: "",
+                    request: response.request
+                });
+            }
+        });
+    }
+
+    render() {
+        let content;
+        if (!this.state.request && !this.state.error) {
+            content = (
+                <div style={{textAlign: "center", width: "100%"}}>
+                    <RefreshIndicator
+                        status="loading"
+                        left={0}
+                        top={0}
+                    />
+                </div>
+            );
+        } else if (this.state.request) {
+            content = (
+                <RequestList requests={ [this.state.request] } />
+            );
+        }
+        return (
+            <div>
+                {content}
+                {this.state.error}
             </div>
         );
     }
