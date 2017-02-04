@@ -9,8 +9,6 @@ export class Requests extends React.Component {
         super();
     }
 
-
-    
     render() {
         return (
             <Router history={browserHistory}>
@@ -223,8 +221,14 @@ class RequestView extends React.Component {
                              error: "",
                              messages: response.messages
                          });
+                         this.sendRead();
                      }
                  });
+    }
+
+    sendRead() {
+        Ajax.delete(`/api/requests/${this.props.params.id}/messages/unread`,
+                    (err, response) => { });
     }
     
     render() {

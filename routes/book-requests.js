@@ -149,6 +149,38 @@ router.post("/api/requests/:requestId/messages", function(req, res) {
     }
 });
 
+router.get("/api/requests/:requestId/messages/unread", function(req, res) {
+    if (req.user) {
+        db.countRequestUnread(req.params.requestId, req.user.id,
+                              function(err, count) {
+                                  if (err) {
+                                      console.error(err);
+                                      res.json({error: err});
+                                  } else {
+                                      res.json({count: count});
+                                  }
+                              });
+    } else {
+        res.json({error: "Unauthorized"});
+    }
+});
+
+router.delete("/api/requests/:requestId/messages/unread", function(req, res) {
+    if (req.user) {
+        db.setRequestMessagesRead(req.params.requestId, req.user.id,
+                                  function(err) {
+                                      if (err) {
+                                          console.error(err);
+                                          res.json({error: err});
+                                      } else {
+                                          res.json({success: true});
+                                      }
+                                  });
+    } else {
+        res.json({error: "Unauthorized"});
+    }
+});
+
 module.exports = router;
       
 function parseMessagesForUser(messages, userId) {

@@ -401,6 +401,33 @@ exports.countRequestUnread = function(requestId, userId, cb) {
            .catch((err) => cb(err));
 }
 
+exports.setRequestMessagesRead = function(requestId, userId, cb) {
+    Request.findById(requestId)
+           .then((thisRequest) => {
+               if (thisRequest.BuyerUserId === userId ||
+                   thisRequest.SellerUserId === userId) {
+                   Message.update({
+                       unread: false
+                   }, {
+                       where: {
+                           $and: {
+                               RequestId: requestId,
+                               $not: {
+                                   UserId: userId
+                               }
+                           }
+                       }
+                   })
+                          .then(() => cb(null))
+                          .catch((err) => cb(err));
+               } else {
+                   cb("Unauthorized");
+               }
+           })
+           .catch((err) => cb(err)); // catch request lookup
+                   
+}
+
 /* CLEANUP
  */
 

@@ -62884,8 +62884,14 @@
 	                        error: "",
 	                        messages: response.messages
 	                    });
+	                    _this13.sendRead();
 	                }
 	            });
+	        }
+	    }, {
+	        key: "sendRead",
+	        value: function sendRead() {
+	            _ajax.Ajax.delete("/api/requests/" + this.props.params.id + "/messages/unread", function (err, response) {});
 	        }
 	    }, {
 	        key: "render",
