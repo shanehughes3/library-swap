@@ -247,7 +247,10 @@ exports.changeRequestStatus = function(userId, username, requestId,
     if (["accepted", "rejected", "withdrawn"].includes(newStatus)) {
         Request.findById(requestId)
                .then((request) => {
-                   if (userId === request.SellerUserId) {
+                   if ((userId === request.SellerUserId &&
+                        ["accepted", "rejected"].includes(newStatus)) ||
+                       (userId === request.BuyerUserId &&
+                        newStatus === "withdrawn")) {
                        request.status = newStatus;
                        request.save()
                               .then(() =>
@@ -307,7 +310,7 @@ function createInitialRequestMessage(newRequest, userId, cb) {
            .catch((err) => cb(err));
 }
 
-function createUpdateRequestMessage(request, username, cb) {
+function createUpdateRequestMessage(request, username, userId, cb) {
     Message.build({
         text: `${username} has ${request.status} this request`,
         RequestId: request.id,
@@ -356,7 +359,7 @@ exports.newMessage = function(requestId, userId, messageText, cb) {
 }
 
 exports.countUserUnread = function(userId, cb) {
-    Message.count({
+    Message.findAndCountAll({
         include: [{
             model: Request,
             as: "Request"
@@ -375,7 +378,8 @@ exports.countUserUnread = function(userId, cb) {
                 ],
                 unread: true
             }
-        }
+        },
+        attributes: ["RequestId"]
     })
            .then((count) => cb(null, count))
            .catch((err) => cb(err));

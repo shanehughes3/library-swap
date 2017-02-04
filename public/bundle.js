@@ -62717,6 +62717,23 @@
 	                        error: "",
 	                        requests: response.requests
 	                    });
+	                    _this6.getUnread();
+	                }
+	            });
+	        }
+	    }, {
+	        key: "getUnread",
+	        value: function getUnread() {
+	            var _this7 = this;
+
+	            _ajax.Ajax.get("/unread", function (err, response) {
+	                if (!err && response.rows && response.rows.length > 0) {
+	                    _this7.setState({
+	                        requests: _this7.state.requests.map(function (request) {
+	                            request.unread = response.rows.includes(request.id) ? true : false;
+	                            return request;
+	                        })
+	                    });
 	                }
 	            });
 	        }
@@ -62741,27 +62758,27 @@
 	    function RequestsIncoming() {
 	        _classCallCheck(this, RequestsIncoming);
 
-	        var _this7 = _possibleConstructorReturn(this, (RequestsIncoming.__proto__ || Object.getPrototypeOf(RequestsIncoming)).call(this));
+	        var _this8 = _possibleConstructorReturn(this, (RequestsIncoming.__proto__ || Object.getPrototypeOf(RequestsIncoming)).call(this));
 
-	        _this7.state = {
+	        _this8.state = {
 	            requests: [],
 	            error: ""
 	        };
-	        return _this7;
+	        return _this8;
 	    }
 
 	    _createClass(RequestsIncoming, [{
 	        key: "componentWillMount",
 	        value: function componentWillMount() {
-	            var _this8 = this;
+	            var _this9 = this;
 
 	            _ajax.Ajax.get("/api/requests/incoming", function (err, response) {
 	                if (err || response.error) {
-	                    _this8.setState({
+	                    _this9.setState({
 	                        error: "An error occurred while retrieving requests"
 	                    });
 	                } else {
-	                    _this8.setState({
+	                    _this9.setState({
 	                        error: "",
 	                        requests: response.requests
 	                    });
@@ -62789,27 +62806,27 @@
 	    function RequestsOutgoing() {
 	        _classCallCheck(this, RequestsOutgoing);
 
-	        var _this9 = _possibleConstructorReturn(this, (RequestsOutgoing.__proto__ || Object.getPrototypeOf(RequestsOutgoing)).call(this));
+	        var _this10 = _possibleConstructorReturn(this, (RequestsOutgoing.__proto__ || Object.getPrototypeOf(RequestsOutgoing)).call(this));
 
-	        _this9.state = {
+	        _this10.state = {
 	            requests: [],
 	            error: ""
 	        };
-	        return _this9;
+	        return _this10;
 	    }
 
 	    _createClass(RequestsOutgoing, [{
 	        key: "componentWillMount",
 	        value: function componentWillMount() {
-	            var _this10 = this;
+	            var _this11 = this;
 
 	            _ajax.Ajax.get("/api/requests/outgoing", function (err, response) {
 	                if (err) {
-	                    _this10.setState({
+	                    _this11.setState({
 	                        error: "An error occurred while retrieving requests"
 	                    });
 	                } else {
-	                    _this10.setState({
+	                    _this11.setState({
 	                        error: "",
 	                        requests: response.requests
 	                    });
@@ -62837,14 +62854,14 @@
 	    function RequestView() {
 	        _classCallCheck(this, RequestView);
 
-	        var _this11 = _possibleConstructorReturn(this, (RequestView.__proto__ || Object.getPrototypeOf(RequestView)).call(this));
+	        var _this12 = _possibleConstructorReturn(this, (RequestView.__proto__ || Object.getPrototypeOf(RequestView)).call(this));
 
-	        _this11.state = {
+	        _this12.state = {
 	            messages: [],
 	            error: ""
 	        };
-	        _this11.refreshMessages = _this11.refreshMessages.bind(_this11);
-	        return _this11;
+	        _this12.refreshMessages = _this12.refreshMessages.bind(_this12);
+	        return _this12;
 	    }
 
 	    _createClass(RequestView, [{
@@ -62855,15 +62872,15 @@
 	    }, {
 	        key: "refreshMessages",
 	        value: function refreshMessages() {
-	            var _this12 = this;
+	            var _this13 = this;
 
 	            _ajax.Ajax.get("/api/requests/" + this.props.params.id + "/messages", function (err, response) {
 	                if (err || response.error) {
-	                    _this12.setState({
+	                    _this13.setState({
 	                        error: "Sorry, an error occurred"
 	                    });
 	                } else {
-	                    _this12.setState({
+	                    _this13.setState({
 	                        error: "",
 	                        messages: response.messages
 	                    });
@@ -62908,6 +62925,17 @@
 	            var listItems = void 0;
 	            if (this.props.requests && this.props.requests.length > 0) {
 	                listItems = this.props.requests.map(function (request) {
+	                    var statusIcon = null;
+	                    if (request.unread) {
+	                        statusIcon = "mail";
+	                    } else if (request.status === "accepted") {
+	                        statusIcon = "done";
+	                    } else if (request.status === "rejected") {
+	                        statusIcon = "clear";
+	                    } else if (request.status === "withdrawn") {
+	                        statusIcon = "block";
+	                    }
+
 	                    return _react2.default.createElement(
 	                        _reactRouter.Link,
 	                        { to: "/requests/view/" + request.id, key: request.id },
@@ -62916,7 +62944,12 @@
 	                                src: request.SellerBook.thumbnail || "" }),
 	                            primaryText: request.SellerBook.title,
 	                            secondaryText: "Offer: " + request.BuyerBook.title,
-	                            secondaryTextLines: 1 })
+	                            secondaryTextLines: 1,
+	                            rightIcon: statusIcon ? _react2.default.createElement(
+	                                _materialUi.FontIcon,
+	                                { className: "material-icons" },
+	                                statusIcon
+	                            ) : null })
 	                    );
 	                });
 	            }
@@ -62942,14 +62975,14 @@
 	    function RequestHeaderForMessages() {
 	        _classCallCheck(this, RequestHeaderForMessages);
 
-	        var _this14 = _possibleConstructorReturn(this, (RequestHeaderForMessages.__proto__ || Object.getPrototypeOf(RequestHeaderForMessages)).call(this));
+	        var _this15 = _possibleConstructorReturn(this, (RequestHeaderForMessages.__proto__ || Object.getPrototypeOf(RequestHeaderForMessages)).call(this));
 
-	        _this14.state = {
+	        _this15.state = {
 	            request: null,
 	            loadError: "",
 	            requestError: ""
 	        };
-	        return _this14;
+	        return _this15;
 	    }
 
 	    _createClass(RequestHeaderForMessages, [{
@@ -62960,15 +62993,15 @@
 	    }, {
 	        key: "getRequest",
 	        value: function getRequest() {
-	            var _this15 = this;
+	            var _this16 = this;
 
 	            _ajax.Ajax.get("/api/requests/" + this.props.requestId, function (err, response) {
 	                if (err || response.error) {
-	                    _this15.setState({
+	                    _this16.setState({
 	                        loadError: "Sorry, an error occurred"
 	                    });
 	                } else {
-	                    _this15.setState({
+	                    _this16.setState({
 	                        loadError: "",
 	                        request: response.request
 	                    });
@@ -62978,26 +63011,26 @@
 	    }, {
 	        key: "sendStatusChange",
 	        value: function sendStatusChange(status) {
-	            var _this16 = this;
+	            var _this17 = this;
 
 	            this.setState({
 	                loadError: ""
 	            });
 	            _ajax.Ajax.put("/api/requests/" + this.props.requestId, { status: status }, function (err, response) {
 	                if (err || response.error) {
-	                    _this16.setState({
+	                    _this17.setState({
 	                        loadError: "Sorry, an error occurred"
 	                    });
 	                } else {
-	                    _this16.getRequest();
-	                    _this16.props.refreshMessages();
+	                    _this17.getRequest();
+	                    _this17.props.refreshMessages();
 	                }
 	            });
 	        }
 	    }, {
 	        key: "render",
 	        value: function render() {
-	            var _this17 = this;
+	            var _this18 = this;
 
 	            var content = void 0;
 	            if (!this.state.request && !this.state.loadError) {
@@ -63018,7 +63051,7 @@
 	                    // user is buyer
 	                    interfaceButtons = _react2.default.createElement(_materialUi.RaisedButton, {
 	                        onClick: function onClick() {
-	                            return _this17.sendStatusChange("withdrawn");
+	                            return _this18.sendStatusChange("withdrawn");
 	                        },
 	                        label: "Cancel Request"
 	                    });
@@ -63029,13 +63062,13 @@
 	                        null,
 	                        _react2.default.createElement(_materialUi.RaisedButton, {
 	                            onClick: function onClick() {
-	                                return _this17.sendStatusChange("accepted");
+	                                return _this18.sendStatusChange("accepted");
 	                            },
 	                            label: "Accept"
 	                        }),
 	                        _react2.default.createElement(_materialUi.RaisedButton, {
 	                            onClick: function onClick() {
-	                                return _this17.sendStatusChange("rejected");
+	                                return _this18.sendStatusChange("rejected");
 	                            },
 	                            label: "Decline"
 	                        })
@@ -63067,22 +63100,22 @@
 	    function NewMessageDialog() {
 	        _classCallCheck(this, NewMessageDialog);
 
-	        var _this18 = _possibleConstructorReturn(this, (NewMessageDialog.__proto__ || Object.getPrototypeOf(NewMessageDialog)).call(this));
+	        var _this19 = _possibleConstructorReturn(this, (NewMessageDialog.__proto__ || Object.getPrototypeOf(NewMessageDialog)).call(this));
 
-	        _this18.state = {
+	        _this19.state = {
 	            messageText: "",
 	            statusMessage: "",
 	            loading: false
 	        };
-	        _this18.sendMessage = _this18.sendMessage.bind(_this18);
-	        _this18.handleChange = _this18.handleChange.bind(_this18);
-	        return _this18;
+	        _this19.sendMessage = _this19.sendMessage.bind(_this19);
+	        _this19.handleChange = _this19.handleChange.bind(_this19);
+	        return _this19;
 	    }
 
 	    _createClass(NewMessageDialog, [{
 	        key: "sendMessage",
 	        value: function sendMessage() {
-	            var _this19 = this;
+	            var _this20 = this;
 
 	            var messageText = this.state.messageText;
 
@@ -63092,17 +63125,17 @@
 	            });
 	            _ajax.Ajax.post("/api/requests/" + this.props.requestId + "/messages", { message: messageText }, function (err, response) {
 	                if (err || response.error) {
-	                    _this19.setState({
+	                    _this20.setState({
 	                        loading: false,
 	                        statusMessage: "Sorry, an error occurred"
 	                    });
 	                } else {
-	                    _this19.setState({
+	                    _this20.setState({
 	                        loading: false,
 	                        statusMessage: "",
 	                        messageText: ""
 	                    });
-	                    _this19.props.refresh();
+	                    _this20.props.refresh();
 	                }
 	            });
 	        }

@@ -98,6 +98,7 @@ router.put("/api/requests/:requestId", function(req, res) {
                                req.params.requestId,
                                req.body.status, function(err) {
                                    if (err) {
+                                       console.error(err);
                                        res.json({error: err});
                                    } else {
                                        res.json({success: true});

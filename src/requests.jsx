@@ -1,6 +1,6 @@
 import React from "react";
 import {Router, Route, IndexRoute, Link, browserHistory} from "react-router";
-import {List, ListItem, Avatar, Divider, TextField, RaisedButton, RefreshIndicator} from "material-ui";
+import {List, ListItem, Avatar, Divider, TextField, RaisedButton, RefreshIndicator, FontIcon} from "material-ui";
 import {Header} from "./header.jsx";
 import {Ajax} from "./ajax";
 
@@ -98,6 +98,22 @@ class RequestsInbox extends React.Component {
                 this.setState({
                     error: "",
                     requests: response.requests
+                });
+                this.getUnread();
+            }
+        });
+    }
+
+    getUnread() {
+        Ajax.get("/unread", (err, response) => {
+            if (!err && response.rows && response.rows.length > 0) {
+                this.setState({
+                    requests: this.state.requests.map((request) => {
+                        request.unread =
+                            (response.rows.includes(request.id)) ?
+                            true : false;
+                        return request;
+                    })
                 });
             }
         });
@@ -237,6 +253,17 @@ class RequestList extends React.Component {
         let listItems;
         if (this.props.requests && this.props.requests.length > 0) {
             listItems = this.props.requests.map((request) => {
+                let statusIcon = null;
+                if (request.unread) {
+                    statusIcon = "mail";
+                } else if (request.status === "accepted") {
+                    statusIcon = "done";
+                } else if (request.status === "rejected") {
+                    statusIcon = "clear";
+                } else if (request.status === "withdrawn") {
+                    statusIcon = "block";
+                }
+                
                 return (
                     <Link to={`/requests/view/${request.id}`} key={request.id} >
                         <ListItem
@@ -246,7 +273,13 @@ class RequestList extends React.Component {
                             }
                             primaryText={request.SellerBook.title}
                             secondaryText={`Offer: ${request.BuyerBook.title}`}
-                            secondaryTextLines={1} />
+                            secondaryTextLines={1}
+                            rightIcon={(statusIcon) ? (
+                                       <FontIcon className="material-icons">
+                                                            {statusIcon}
+                                       </FontIcon>
+                                ) : null
+                                      }/>
                     </Link>
                 );
             });

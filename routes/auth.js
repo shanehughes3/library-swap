@@ -54,18 +54,25 @@ router.post("/register", function(req, res) {
 
 router.get("/unread", function(req, res) {
     if (req.user) {
-        db.countUserUnread(req.user.id, function(err, count) {
+        db.countUserUnread(req.user.id, function(err, data) {
             if (err) {
                 console.log(err);
                 res.json({error: "Sorry, an error occurred"});
             } else {
-                res.json({count: count});
+                res.json(parseUnreadData(data));
             }
         });
     } else {
         res.json({error: "Unauthorized"});
     }
 });
+
+function parseUnreadData(data) {
+    if (data.rows && data.rows.length > 0) {
+        data.rows = data.rows.map((row) => row.RequestId);
+    }
+    return data;
+}
 
 router.get("/logout", function(req, res) {
     req.logout();
