@@ -1,6 +1,7 @@
 import React from "react";
 import {LoginDialog, RegisterDialog} from "./header-dialogs.jsx";
-import {Menu, MenuItem, Popover} from "material-ui";
+import {Menu, MenuItem, Popover, Badge} from "material-ui";
+import {Ajax} from "./ajax";
 
 export class Header extends React.Component {
     constructor() {
@@ -8,12 +9,25 @@ export class Header extends React.Component {
 	this.state = {
 	    dialog: "",
             isMenuOpen: false,
-            anchorEl: undefined
+            anchorEl: undefined,
+            unreadCount: undefined
 	};
 	this.openDialog = this.openDialog.bind(this);
         this.closeDialog = this.closeDialog.bind(this);
         this.openMenu = this.openMenu.bind(this);
         this.closeMenu = this.closeMenu.bind(this);
+    }
+
+    componentWillMount() {
+        if (this.props.user) {
+            Ajax.get("/unread", (err, response) => {
+                if (!err && !response.error) {
+                    this.setState({
+                        unreadCount: response.count
+                    });
+                }
+            });
+        }
     }
 
     openDialog(dialog) {
@@ -47,11 +61,22 @@ export class Header extends React.Component {
         if (this.props.user) {
             buttons = (
                 <span style={{position: "relative"}}>
+                    
                     <span
                         id="user-menu"
                         className="header-button"
                         onTouchTap={this.openMenu} >
-                        {this.props.user}
+                        <Badge
+                            badgeStyle={{
+                                padding: 0,
+                                visibility:
+                                  (this.state.unreadCount > 0) ?
+                                           "visible" : "hidden"
+                            }}
+                            badgeContent={this.state.unreadCount || 0}
+                            primary >
+                            {this.props.user}
+                        </Badge>
                     </span>
                     <Popover
                         open={this.state.isMenuOpen}

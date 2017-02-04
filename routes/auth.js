@@ -52,6 +52,21 @@ router.post("/register", function(req, res) {
     }
 });
 
+router.get("/unread", function(req, res) {
+    if (req.user) {
+        db.countUserUnread(req.user.id, function(err, count) {
+            if (err) {
+                console.log(err);
+                res.json({error: "Sorry, an error occurred"});
+            } else {
+                res.json({count: count});
+            }
+        });
+    } else {
+        res.json({error: "Unauthorized"});
+    }
+});
+
 router.get("/logout", function(req, res) {
     req.logout();
     res.redirect("/");

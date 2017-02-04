@@ -21634,6 +21634,8 @@
 
 	var _materialUi = __webpack_require__(181);
 
+	var _ajax = __webpack_require__(549);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21653,7 +21655,8 @@
 	        _this.state = {
 	            dialog: "",
 	            isMenuOpen: false,
-	            anchorEl: undefined
+	            anchorEl: undefined,
+	            unreadCount: undefined
 	        };
 	        _this.openDialog = _this.openDialog.bind(_this);
 	        _this.closeDialog = _this.closeDialog.bind(_this);
@@ -21663,6 +21666,21 @@
 	    }
 
 	    _createClass(Header, [{
+	        key: "componentWillMount",
+	        value: function componentWillMount() {
+	            var _this2 = this;
+
+	            if (this.props.user) {
+	                _ajax.Ajax.get("/unread", function (err, response) {
+	                    if (!err && !response.error) {
+	                        _this2.setState({
+	                            unreadCount: response.count
+	                        });
+	                    }
+	                });
+	            }
+	        }
+	    }, {
 	        key: "openDialog",
 	        value: function openDialog(dialog) {
 	            if (this.state.dialog === dialog) {
@@ -21706,7 +21724,17 @@
 	                            id: "user-menu",
 	                            className: "header-button",
 	                            onTouchTap: this.openMenu },
-	                        this.props.user
+	                        _react2.default.createElement(
+	                            _materialUi.Badge,
+	                            {
+	                                badgeStyle: {
+	                                    padding: 0,
+	                                    visibility: this.state.unreadCount > 0 ? "visible" : "hidden"
+	                                },
+	                                badgeContent: this.state.unreadCount || 0,
+	                                primary: true },
+	                            this.props.user
+	                        )
 	                    ),
 	                    _react2.default.createElement(
 	                        _materialUi.Popover,

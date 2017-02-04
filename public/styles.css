@@ -35,6 +35,9 @@ a {
     margin-top: 20px;
     cursor: pointer;
 }
+.header-button > div {
+    padding: 0 !important;
+}
 .header-dialog {
     padding: 20px;
     margin-right: 30px;
