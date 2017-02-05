@@ -21576,6 +21576,8 @@
 
 	var _header = __webpack_require__(179);
 
+	var _footer = __webpack_require__(615);
+
 	var _anonLanding = __webpack_require__(550);
 
 	var _search = __webpack_require__(551);
@@ -21605,7 +21607,8 @@
 	                "div",
 	                null,
 	                _react2.default.createElement(_header.Header, { user: this.props.user }),
-	                content
+	                content,
+	                _react2.default.createElement(_footer.Footer, null)
 	            );
 	        }
 	    }]);
@@ -61807,11 +61810,15 @@
 	            return _react2.default.createElement(
 	                "div",
 	                { style: { display: this.props.display } },
-	                _react2.default.createElement(_materialUi.TextField, {
-	                    id: "books-search-field",
-	                    floatingLabelText: "Enter search terms...",
-	                    value: this.state.query,
-	                    onChange: this.onQueryChange }),
+	                _react2.default.createElement(
+	                    "div",
+	                    { id: "books-search-container" },
+	                    _react2.default.createElement(_materialUi.TextField, {
+	                        id: "books-search-field",
+	                        floatingLabelText: "Enter search terms...",
+	                        value: this.state.query,
+	                        onChange: this.onQueryChange })
+	                ),
 	                _react2.default.createElement(
 	                    "div",
 	                    { className: "middle-message" },
@@ -62339,6 +62346,8 @@
 
 	var _header = __webpack_require__(179);
 
+	var _footer = __webpack_require__(615);
+
 	var _ajax = __webpack_require__(549);
 
 	var _booksDisplay = __webpack_require__(552);
@@ -62399,7 +62408,8 @@
 	                ),
 	                _react2.default.createElement(_booksDisplay.BooksDisplay, {
 	                    books: this.state.books,
-	                    button: "DeleteBook" })
+	                    button: "DeleteBook" }),
+	                _react2.default.createElement(_footer.Footer, null)
 	            );
 	        }
 	    }]);
@@ -62549,6 +62559,8 @@
 
 	var _header = __webpack_require__(179);
 
+	var _footer = __webpack_require__(615);
+
 	var _ajax = __webpack_require__(549);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -62612,6 +62624,11 @@
 	                    "div",
 	                    { className: "requests-main-window" },
 	                    this.props.children
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { style: { display: "block" } },
+	                    _react2.default.createElement(_footer.Footer, null)
 	                )
 	            );
 	        }
@@ -68792,6 +68809,45 @@
 	  });
 	};
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 615 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.Footer = function (props) {
+	    return _react2.default.createElement(
+	        "footer",
+	        { id: "footer" },
+	        _react2.default.createElement(
+	            "div",
+	            null,
+	            "Created by",
+	            _react2.default.createElement(
+	                "a",
+	                { href: "https://github.com/shanehughes3" },
+	                " Shane Hughes"
+	            )
+	        ),
+	        _react2.default.createElement(
+	            "div",
+	            null,
+	            _react2.default.createElement(
+	                "a",
+	                { href: "https://github.com/shanehughes3/library-swap" },
+	                "View the source "
+	            ),
+	            "on Github"
+	        )
+	    );
+	};
 
 /***/ }
 /******/ ]);

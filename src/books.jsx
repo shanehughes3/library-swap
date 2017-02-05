@@ -1,6 +1,7 @@
 import React from "react";
 import {TextField, RefreshIndicator, IconButton} from "material-ui";
 import {Header} from "./header.jsx";
+import {Footer} from "./footer.jsx";
 import {Ajax} from "./ajax";
 import {BooksDisplay} from "./books-display.jsx";
 
@@ -37,6 +38,7 @@ export class Books extends React.Component {
                 <BooksDisplay
                     books={this.state.books}
                     button="DeleteBook" />
+                <Footer />
             </div>
         );
     }

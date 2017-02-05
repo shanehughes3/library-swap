@@ -187,11 +187,13 @@ class SearchBooks extends React.Component {
         }
         return (
             <div style={{ display: this.props.display }}>
-                <TextField
-                    id="books-search-field"
-                    floatingLabelText="Enter search terms..."
-                    value={this.state.query}
-                    onChange={this.onQueryChange} />
+                <div id="books-search-container">
+                    <TextField
+                        id="books-search-field"
+                        floatingLabelText="Enter search terms..."
+                        value={this.state.query}
+                        onChange={this.onQueryChange} />
+                </div>
                 <div className="middle-message">
                     {spinner}
                     {message}

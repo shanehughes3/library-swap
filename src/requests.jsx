@@ -2,6 +2,7 @@ import React from "react";
 import {Router, Route, IndexRoute, Link, browserHistory} from "react-router";
 import {List, ListItem, Avatar, Divider, TextField, RaisedButton, RefreshIndicator, FontIcon} from "material-ui";
 import {Header} from "./header.jsx";
+import {Footer} from "./footer.jsx";
 import {Ajax} from "./ajax";
 
 export class Requests extends React.Component {
@@ -36,6 +37,9 @@ export class RequestsLayout extends React.Component {
                 <RequestsNav />
                 <div className="requests-main-window">
                     {this.props.children}
+                </div>
+                <div style={{display: "block"}}>
+                    <Footer />
                 </div>
             </div>
         );

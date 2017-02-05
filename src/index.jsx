@@ -1,5 +1,6 @@
 import React from "react";
 import {Header} from "./header.jsx";
+import {Footer} from "./footer.jsx";
 import {AnonLanding} from "./anon-landing.jsx";
 import {SearchArea} from "./search.jsx";
 
@@ -15,6 +16,7 @@ export class Index extends React.Component {
             <div>
                 <Header user={this.props.user} />
                 {content}
+                <Footer />
             </div>
         );
     }

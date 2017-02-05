@@ -1,5 +1,9 @@
 body {
     color: rgba(0,0,0,0.87);
+    padding: 0;
+    margin: 0;
+    line-height: 1.5em;
+    font-size: 14px;
 }
 a {
     text-decoration: none;
@@ -15,7 +19,7 @@ a {
     color: black;
     font-size: 50px;
     position: relative;
-    border-bottom: 10px solid rgb(244,67,54);
+    border-bottom: 10px solid rgb(229,57,53);
     padding-bottom: 5px;
     margin-top: 5px;
 }
@@ -34,6 +38,7 @@ a {
     margin-right: 20px;
     margin-top: 20px;
     cursor: pointer;
+    line-height: 20px;
 }
 .header-button > div {
     padding: 0 !important;
@@ -109,6 +114,9 @@ a {
 .middle-message:empty {
     padding: 0;
 }
+#books-search-container {
+    margin-left: 1em;
+}
 
 
 /*
@@ -130,7 +138,7 @@ a {
     color: rgba(0,0,0,0.54);
 }
 .requests-side-menu-item-active {
-    border-right: 3px solid rgb(244,67,54);
+    border-right: 3px solid rgb(229,57,53);
     color: rgba(0,0,0,0.87);
 }
 .requests-main-window {
@@ -141,4 +149,19 @@ a {
 
 .message {
     border: 1px solid black;
+}
+
+
+#footer {
+    float: right;
+}
+#footer > div {
+    padding: 0;
+    margin: 0;
+    margin-right: 10px;
+    font-size: 0.8em;
+    color: rgba(0,0,0,0.5);
+}
+#footer > div > a:hover {
+    text-decoration: underline;
 }
