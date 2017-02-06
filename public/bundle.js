@@ -61521,6 +61521,8 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _materialUi = __webpack_require__(181);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -61541,7 +61543,79 @@
 	    _createClass(AnonLanding, [{
 	        key: "render",
 	        value: function render() {
-	            return _react2.default.createElement("div", null);
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(
+	                    "div",
+	                    { id: "home-banner" },
+	                    _react2.default.createElement(
+	                        "div",
+	                        null,
+	                        "Find a great new book"
+	                    )
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { id: "home-middle-text" },
+	                    "Expand your horizons by trading your library"
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { id: "home-card-container" },
+	                    _react2.default.createElement(
+	                        _materialUi.Paper,
+	                        { zDepth: 3 },
+	                        _react2.default.createElement("div", {
+	                            style: { backgroundImage: "url('/home-card-1.jpg')" },
+	                            className: "home-card-top-image" }),
+	                        _react2.default.createElement(
+	                            "div",
+	                            { className: "home-card-text" },
+	                            _react2.default.createElement(
+	                                "div",
+	                                null,
+	                                "Browse"
+	                            ),
+	                            "Browse other users' books and upload the books you would like to trade."
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        _materialUi.Paper,
+	                        { zDepth: 3 },
+	                        _react2.default.createElement("div", {
+	                            style: { backgroundImage: "url('/home-card-2.jpg')" },
+	                            className: "home-card-top-image" }),
+	                        _react2.default.createElement(
+	                            "div",
+	                            { className: "home-card-text" },
+	                            _react2.default.createElement(
+	                                "div",
+	                                null,
+	                                "Request"
+	                            ),
+	                            "Request a book and select one of yours to offer in return."
+	                        )
+	                    ),
+	                    _react2.default.createElement(
+	                        _materialUi.Paper,
+	                        { zDepth: 3 },
+	                        _react2.default.createElement("div", {
+	                            style: { backgroundImage: "url('/home-card-3.jpg')" },
+	                            className: "home-card-top-image" }),
+	                        _react2.default.createElement(
+	                            "div",
+	                            { className: "home-card-text" },
+	                            _react2.default.createElement(
+	                                "div",
+	                                null,
+	                                "Swap"
+	                            ),
+	                            "Chat with the other user - if it's a good deal, make a swap!"
+	                        )
+	                    )
+	                )
+	            );
 	        }
 	    }]);
 

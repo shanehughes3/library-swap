@@ -2,8 +2,9 @@ body {
     color: rgba(0,0,0,0.87);
     padding: 0;
     margin: 0;
-    line-height: 1.5em;
-    font-size: 14px;
+    line-height: 1.5;
+    font-size: 16px;
+    font-family: "Roboto", sans-serif;
 }
 a {
     text-decoration: none;
@@ -16,6 +17,7 @@ a {
 
 #top-bar {
     font-family: "Cormorant Garamond", serif;
+    line-height: 21px;
     color: black;
     font-size: 50px;
     position: relative;
@@ -151,6 +153,61 @@ a {
     border: 1px solid black;
 }
 
+/*
+ * ANON LANDING
+ */
+#home-banner {
+    width: 100%;
+    height: 250px;
+    background: url("/home-banner.jpeg") no-repeat fixed center bottom;
+    background-size: 100%;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+    font-size: 3em;
+    font-weight: 300;
+}
+#home-banner > div {
+    padding-top: 100px;
+    line-height: 1;
+}
+#home-middle-text {
+    font-weight: 300;
+    text-align: center;
+    font-size: 2em;
+    padding: 2em;
+}
+#home-card-container {
+    text-align: center;
+}
+#home-card-container > div {
+    height: 300px;
+    width: 225px;
+    margin: 20px;
+    display: inline-block;
+    vertical-align: top;
+}
+.home-card-top-image {
+    width: 100%;
+    height: 20%;
+    border-bottom: 8px solid rgb(229,57,53);
+    background: no-repeat center;
+    background-size: 100%;
+}
+.home-card-text {
+    color: rgba(0,0,0,0.6);
+    padding: 1em;
+}
+.home-card-text > div {
+    font-size: 1.5em;
+    color: rgba(0,0,0,0.87);
+    text-transform: uppercase;
+    padding-bottom: 2em;
+    padding-top: 1em;
+}
+
+/* 
+ * FOOTER
+ */
 
 #footer {
     float: right;
