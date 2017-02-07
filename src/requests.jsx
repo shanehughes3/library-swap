@@ -1,6 +1,6 @@
 import React from "react";
 import {Router, Route, IndexRoute, Link, browserHistory} from "react-router";
-import {List, ListItem, Avatar, Divider, TextField, RaisedButton, RefreshIndicator, FontIcon} from "material-ui";
+import {List, ListItem, Avatar, Divider, TextField, RaisedButton, RefreshIndicator, FontIcon, Paper} from "material-ui";
 import {Header} from "./header.jsx";
 import {Footer} from "./footer.jsx";
 import {Ajax} from "./ajax";
@@ -242,10 +242,12 @@ class RequestView extends React.Component {
                     requestId={this.props.params.id}
                     refreshMessages={this.refreshMessages}
                 />
+                <Divider />
                 <NewMessageDialog
                     requestId={this.props.params.id}
                     refresh={this.refreshMessages}
                 />
+                <Divider style={{marginTop: "1em", marginBottom: "1em"}} />
                 <MessageList messages={this.state.messages} />
                 {this.state.error}
             </div>
@@ -473,18 +475,28 @@ class NewMessageDialog extends React.Component {
         
         return (
             <div>
-                <TextField
-                    hintText="Send a message"
-                    multiLine={true}
-                    rows={2}
-                    rowsMax={4}
-                    value={this.state.messageText}
-                    onChange={this.handleChange}
-                />
-                <span className="message-chars-remaining" >
-                    {500 - this.state.messageText.length} characters remaining
-                </span>
-                {buttonOrSpinner}
+                <div>
+                    <TextField
+                        hintText="Send a message"
+                        multiLine={true}
+                        rows={2}
+                        rowsMax={4}
+                        value={this.state.messageText}
+                        onChange={this.handleChange}
+                        fullWidth
+                    />
+                </div>
+                <div style={{overflow: "auto"}}>
+                    <div
+                        className="message-chars-remaining"
+                        style={{float: "left"}}
+                    >
+                        {500 - this.state.messageText.length} characters remaining
+                    </div>
+                    <div style={{float: "right"}}>
+                        {buttonOrSpinner}
+                    </div>
+                </div>
             </div>
         );
     }
@@ -500,18 +512,19 @@ class MessageList extends React.Component {
         if (this.props.messages && this.props.messages.length > 0) {
             listItems = this.props.messages.map((message) => {
                 const align = (message.source === "self") ? "right" : "left";
-                const width = (message.source === "server") ? "100%" : "70%";
+                const width = (message.source === "server") ? "100%" : "50%";
                 return (
-                    <div
+                    <Paper
                         style={{
                             float: align,
                             textAlign: align,
                             width: width
                         }}
+                    zDepth={3}
                         className="message"
                         key={message.id} >
                         {message.text}
-                    </div>
+                    </Paper>
                 );
             });
         }

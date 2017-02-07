@@ -62396,27 +62396,35 @@
 	                        "div",
 	                        null,
 	                        _react2.default.createElement(
-	                            "label",
-	                            { htmlFor: "offerBook" },
-	                            "Book to offer:"
+	                            "div",
+	                            null,
+	                            _react2.default.createElement(
+	                                "div",
+	                                null,
+	                                "Book to offer:"
+	                            ),
+	                            _react2.default.createElement(
+	                                _materialUi.SelectField,
+	                                {
+	                                    value: this.state.offerBook,
+	                                    onChange: this.handleSelect,
+	                                    name: "offerBook",
+	                                    floatingLabelText: "Select an option..." },
+	                                options
+	                            )
 	                        ),
 	                        _react2.default.createElement(
-	                            _materialUi.SelectField,
-	                            {
-	                                value: this.state.offerBook,
-	                                onChange: this.handleSelect,
-	                                name: "offerBook",
-	                                floatingLabelText: "Select an option..." },
-	                            options
-	                        ),
-	                        _react2.default.createElement(_materialUi.RaisedButton, {
-	                            onTouchTap: this.handleSubmit,
-	                            primary: true,
-	                            label: "Request" }),
-	                        _react2.default.createElement(_materialUi.RaisedButton, {
-	                            onTouchTap: this.handleCloseDialog,
-	                            label: "Cancel" }),
-	                        this.state.message
+	                            "div",
+	                            { className: "request-dialog-buttons-container" },
+	                            _react2.default.createElement(_materialUi.RaisedButton, {
+	                                onTouchTap: this.handleSubmit,
+	                                primary: true,
+	                                label: "Request" }),
+	                            _react2.default.createElement(_materialUi.RaisedButton, {
+	                                onTouchTap: this.handleCloseDialog,
+	                                label: "Cancel" }),
+	                            this.state.message
+	                        )
 	                    )
 	                )
 	            );
@@ -63073,10 +63081,12 @@
 	                    requestId: this.props.params.id,
 	                    refreshMessages: this.refreshMessages
 	                }),
+	                _react2.default.createElement(_materialUi.Divider, null),
 	                _react2.default.createElement(NewMessageDialog, {
 	                    requestId: this.props.params.id,
 	                    refresh: this.refreshMessages
 	                }),
+	                _react2.default.createElement(_materialUi.Divider, { style: { marginTop: "1em", marginBottom: "1em" } }),
 	                _react2.default.createElement(MessageList, { messages: this.state.messages }),
 	                this.state.error
 	            );
@@ -63345,21 +63355,37 @@
 	            return _react2.default.createElement(
 	                "div",
 	                null,
-	                _react2.default.createElement(_materialUi.TextField, {
-	                    hintText: "Send a message",
-	                    multiLine: true,
-	                    rows: 2,
-	                    rowsMax: 4,
-	                    value: this.state.messageText,
-	                    onChange: this.handleChange
-	                }),
 	                _react2.default.createElement(
-	                    "span",
-	                    { className: "message-chars-remaining" },
-	                    500 - this.state.messageText.length,
-	                    " characters remaining"
+	                    "div",
+	                    null,
+	                    _react2.default.createElement(_materialUi.TextField, {
+	                        hintText: "Send a message",
+	                        multiLine: true,
+	                        rows: 2,
+	                        rowsMax: 4,
+	                        value: this.state.messageText,
+	                        onChange: this.handleChange,
+	                        fullWidth: true
+	                    })
 	                ),
-	                buttonOrSpinner
+	                _react2.default.createElement(
+	                    "div",
+	                    { style: { overflow: "auto" } },
+	                    _react2.default.createElement(
+	                        "div",
+	                        {
+	                            className: "message-chars-remaining",
+	                            style: { float: "left" }
+	                        },
+	                        500 - this.state.messageText.length,
+	                        " characters remaining"
+	                    ),
+	                    _react2.default.createElement(
+	                        "div",
+	                        { style: { float: "right" } },
+	                        buttonOrSpinner
+	                    )
+	                )
 	            );
 	        }
 	    }]);
@@ -63383,15 +63409,16 @@
 	            if (this.props.messages && this.props.messages.length > 0) {
 	                listItems = this.props.messages.map(function (message) {
 	                    var align = message.source === "self" ? "right" : "left";
-	                    var width = message.source === "server" ? "100%" : "70%";
+	                    var width = message.source === "server" ? "100%" : "50%";
 	                    return _react2.default.createElement(
-	                        "div",
+	                        _materialUi.Paper,
 	                        {
 	                            style: {
 	                                float: align,
 	                                textAlign: align,
 	                                width: width
 	                            },
+	                            zDepth: 3,
 	                            className: "message",
 	                            key: message.id },
 	                        message.text

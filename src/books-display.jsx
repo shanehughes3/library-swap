@@ -339,24 +339,28 @@ class RequestBookButton extends React.Component {
                     onCancel={this.handleCloseDialog}>
                     <h3>Request "{this.props.title}"</h3>
                     <div>
-                        <label htmlFor="offerBook">
-                            Book to offer:
-                        </label>
-                        <SelectField
-                            value={this.state.offerBook}
-                            onChange={this.handleSelect}
-                            name="offerBook"
-                            floatingLabelText="Select an option..." >
-                            {options}
-                        </SelectField>
-                        <RaisedButton
-                            onTouchTap={this.handleSubmit}
-                            primary
-                            label="Request" />
-                        <RaisedButton
-                            onTouchTap={this.handleCloseDialog}
-                            label="Cancel" />
-                        {this.state.message}
+                        <div>
+                            <div>
+                                Book to offer:
+                            </div>
+                            <SelectField
+                                value={this.state.offerBook}
+                                onChange={this.handleSelect}
+                                name="offerBook"
+                                floatingLabelText="Select an option..." >
+                                {options}
+                            </SelectField>
+                        </div>
+                        <div className="request-dialog-buttons-container">
+                            <RaisedButton
+                                onTouchTap={this.handleSubmit}
+                                primary
+                                label="Request" />
+                            <RaisedButton
+                                onTouchTap={this.handleCloseDialog}
+                                label="Cancel" />
+                            {this.state.message}
+                        </div>
                     </div>
                 </Dialog>
             </div>

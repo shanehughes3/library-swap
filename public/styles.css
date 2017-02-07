@@ -156,10 +156,14 @@ a {
     display: inline-block;
     vertical-align: top;
     margin: 20px;
+    width: 70%;
 }
-
 .message {
-    border: 1px solid black;
+    margin: 1em;
+    padding: 1em;
+}
+.request-dialog-buttons-container > div {
+    margin-right: 1em;
 }
 
 /*
