@@ -21959,6 +21959,20 @@
 	                    this.state.message
 	                );
 	            }
+	            var buttonOrSpinner = void 0;
+	            if (this.state.loading) {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                    status: "loading",
+	                    left: 0,
+	                    top: 0 });
+	            } else {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RaisedButton, {
+	                    onTouchTap: this.onSubmit,
+	                    label: "Log In",
+	                    type: "submit",
+	                    primary: true });
+	            }
+
 	            return _react2.default.createElement(
 	                "div",
 	                { className: "header-dialog" },
@@ -22004,22 +22018,9 @@
 	                    ),
 	                    _react2.default.createElement(
 	                        "div",
-	                        null,
-	                        _react2.default.createElement(_materialUi.RaisedButton, {
-	                            onTouchTap: this.onSubmit,
-	                            label: "Log In",
-	                            type: "submit",
-	                            primary: true })
+	                        { style: { position: "relative", height: "40px" } },
+	                        buttonOrSpinner
 	                    )
-	                ),
-	                _react2.default.createElement(
-	                    "div",
-	                    { style: { position: "relative" } },
-	                    " ",
-	                    _react2.default.createElement(_materialUi.RefreshIndicator, {
-	                        status: this.state.loading ? "loading" : "hide",
-	                        left: 0,
-	                        top: 0 })
 	                ),
 	                message
 	            );
@@ -22128,6 +22129,20 @@
 	                    this.state.message
 	                );
 	            }
+	            var buttonOrSpinner = void 0;
+	            if (this.state.loading) {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                    status: "loading",
+	                    left: 0,
+	                    top: 0 });
+	            } else {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RaisedButton, {
+	                    onTouchTap: this.onSubmit,
+	                    type: "submit",
+	                    label: "Register",
+	                    primary: true });
+	            }
+
 	            return _react2.default.createElement(
 	                "div",
 	                { className: "header-dialog" },
@@ -22183,18 +22198,10 @@
 	                    ),
 	                    _react2.default.createElement(
 	                        "div",
-	                        null,
-	                        _react2.default.createElement(_materialUi.RaisedButton, {
-	                            onTouchTap: this.onSubmit,
-	                            type: "submit",
-	                            label: "Register",
-	                            primary: true })
+	                        { style: { position: "relative", height: "40px" } },
+	                        buttonOrSpinner
 	                    )
 	                ),
-	                _react2.default.createElement(_materialUi.RefreshIndicator, {
-	                    status: this.state.loading ? "loading" : "hide",
-	                    left: 0,
-	                    top: 0 }),
 	                message
 	            );
 	        }
@@ -61753,7 +61760,7 @@
 	                // spinner before initial list load only
 	                spinner = _react2.default.createElement(
 	                    "div",
-	                    { style: { position: "relative" } },
+	                    { className: "spinner-container" },
 	                    _react2.default.createElement(_materialUi.RefreshIndicator, {
 	                        status: "loading",
 	                        left: 0,
@@ -61874,7 +61881,7 @@
 	            if (this.state.loading) {
 	                spinner = _react2.default.createElement(
 	                    "div",
-	                    { style: { position: "relative" } },
+	                    { className: "spinner-container" },
 	                    _react2.default.createElement(_materialUi.RefreshIndicator, {
 	                        status: "loading",
 	                        left: 0,
@@ -62154,19 +62161,32 @@
 	    }, {
 	        key: "render",
 	        value: function render() {
+	            var buttonOrSpinner = void 0;
+	            if (this.state.loading) {
+	                buttonOrSpinner = _react2.default.createElement(
+	                    "div",
+	                    { className: "spinner-container" },
+	                    _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                        status: "loading",
+	                        left: 0,
+	                        top: 0
+	                    })
+	                );
+	            } else {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RaisedButton, {
+	                    onTouchTap: this.addBook,
+	                    primary: true,
+	                    label: "Add Book" });
+	            }
 	            return _react2.default.createElement(
 	                "div",
 	                null,
-	                _react2.default.createElement(_materialUi.RaisedButton, {
-	                    onClick: this.addBook,
-	                    primary: true,
-	                    label: "Add Book" }),
-	                _react2.default.createElement(_materialUi.RefreshIndicator, {
-	                    status: this.state.loading ? "loading" : "hide",
-	                    left: 0,
-	                    top: 0
-	                }),
-	                this.state.message
+	                buttonOrSpinner,
+	                _react2.default.createElement(
+	                    "div",
+	                    null,
+	                    this.state.message
+	                )
 	            );
 	        }
 	    }]);
@@ -62224,18 +62244,31 @@
 	    }, {
 	        key: "render",
 	        value: function render() {
+	            var buttonOrSpinner = void 0;
+	            if (this.state.loading) {
+	                buttonOrSpinner = _react2.default.createElement(
+	                    "div",
+	                    { className: "spinner-container" },
+	                    _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                        status: "loading",
+	                        top: 0,
+	                        left: 0 })
+	                );
+	            } else {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RaisedButton, {
+	                    onTouchTap: this.deleteBook,
+	                    primary: true,
+	                    label: "Remove Book" });
+	            }
 	            return _react2.default.createElement(
 	                "div",
 	                null,
-	                _react2.default.createElement(_materialUi.RaisedButton, {
-	                    onClick: this.deleteBook,
-	                    primary: true,
-	                    label: "Remove Book" }),
-	                _react2.default.createElement(_materialUi.RefreshIndicator, {
-	                    status: this.state.loading ? "loading" : "hide",
-	                    top: 0,
-	                    left: 0 }),
-	                this.state.message
+	                buttonOrSpinner,
+	                _react2.default.createElement(
+	                    "div",
+	                    null,
+	                    this.state.message
+	                )
 	            );
 	        }
 	    }]);
@@ -62344,7 +62377,7 @@
 	                "div",
 	                null,
 	                _react2.default.createElement(_materialUi.RaisedButton, {
-	                    onClick: this.handleOpenDialog,
+	                    onTouchTap: this.handleOpenDialog,
 	                    primary: true,
 	                    label: "Request Book" }),
 	                _react2.default.createElement(
@@ -62377,11 +62410,11 @@
 	                            options
 	                        ),
 	                        _react2.default.createElement(_materialUi.RaisedButton, {
-	                            onClick: this.handleSubmit,
+	                            onTouchTap: this.handleSubmit,
 	                            primary: true,
 	                            label: "Request" }),
 	                        _react2.default.createElement(_materialUi.RaisedButton, {
-	                            onClick: this.handleCloseDialog,
+	                            onTouchTap: this.handleCloseDialog,
 	                            label: "Cancel" }),
 	                        this.state.message
 	                    )
@@ -62444,7 +62477,9 @@
 
 	        _this.state = {
 	            books: [],
-	            viewOffset: 0
+	            viewOffset: 0,
+	            message: "",
+	            loading: true
 	        };
 	        return _this;
 	    }
@@ -62456,18 +62491,33 @@
 
 	            _ajax.Ajax.get("/api/books/user", function (err, res) {
 	                if (err || res.error) {
-	                    console.log(err); ///////////////////////////
+	                    _this2.setState({
+	                        message: "Error retrieving books",
+	                        loading: false
+	                    });
 	                } else {
 	                    _this2.setState({
-	                        books: res.books
+	                        books: res.books,
+	                        loading: false
 	                    });
-	                    console.log(res); ///////////////////////
 	                }
 	            });
 	        }
 	    }, {
 	        key: "render",
 	        value: function render() {
+	            var spinner = void 0;
+	            if (this.state.loading) {
+	                spinner = _react2.default.createElement(
+	                    "div",
+	                    { className: "spinner-container" },
+	                    _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                        status: "loading",
+	                        left: 0,
+	                        top: 0 })
+	                );
+	            }
+
 	            return _react2.default.createElement(
 	                "div",
 	                null,
@@ -62479,6 +62529,12 @@
 	                    "My Books (",
 	                    this.state.books.length,
 	                    ")"
+	                ),
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "middle-message" },
+	                    spinner,
+	                    this.state.message
 	                ),
 	                _react2.default.createElement(_booksDisplay.BooksDisplay, {
 	                    books: this.state.books,
@@ -62535,23 +62591,36 @@
 
 	            this.setState({
 	                loading: true,
-	                timeout: undefined });
-	            _ajax.Ajax.get("/api/books/lookup", {
-	                q: this.state.query,
-	                o: this.state.queryOffset
-	            }, function (err, res) {
-	                if (err || res.error) {
-	                    _this5.setState({
-	                        error: "Sorry, an error occurred",
-	                        loading: false
-	                    });
-	                } else {
-	                    _this5.setState({
-	                        books: res.books,
-	                        loading: false
-	                    });
-	                }
+	                timeout: undefined,
+	                error: ""
 	            });
+	            if (this.state.query) {
+	                _ajax.Ajax.get("/api/books/lookup", {
+	                    q: this.state.query,
+	                    o: this.state.queryOffset
+	                }, function (err, res) {
+	                    if (err || res.error) {
+	                        _this5.setState({
+	                            error: "Sorry, an error occurred",
+	                            loading: false
+	                        });
+	                    } else if (res.books.length === 0) {
+	                        _this5.setState({
+	                            error: "No results",
+	                            loading: false
+	                        });
+	                    } else {
+	                        _this5.setState({
+	                            books: res.books,
+	                            loading: false
+	                        });
+	                    }
+	                });
+	            } else {
+	                this.setState({
+	                    loading: false
+	                });
+	            }
 	        }
 	    }, {
 	        key: "closeSearch",
@@ -62591,14 +62660,24 @@
 	                            onChange: this.onQueryChange,
 	                            value: this.state.query,
 	                            floatingLabelText: "Add new book...",
-	                            id: "add-book-field" }),
+	                            id: "add-book-field" })
+	                    ),
+	                    closeButton,
+	                    this.state.error,
+	                    _react2.default.createElement(
+	                        "div",
+	                        { style: {
+	                                position: "relative",
+	                                display: "inline-block",
+	                                height: "40px",
+	                                width: "40px",
+	                                marginTop: "1em"
+	                            } },
 	                        _react2.default.createElement(_materialUi.RefreshIndicator, {
 	                            status: this.state.loading ? "loading" : "hide",
 	                            left: 0,
 	                            top: 0 })
-	                    ),
-	                    closeButton,
-	                    this.state.error
+	                    )
 	                ),
 	                _react2.default.createElement(_booksDisplay.BooksDisplay, {
 	                    books: this.state.books,

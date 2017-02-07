@@ -10,30 +10,51 @@ export class Books extends React.Component {
         super();
         this.state = {
             books: [],
-            viewOffset: 0
+            viewOffset: 0,
+            message: "",
+            loading: true
         };
     }
     
     componentWillMount() {
         Ajax.get("/api/books/user", (err, res) => {
             if (err || res.error) {
-                console.log(err); ///////////////////////////
+                this.setState({
+                    message: "Error retrieving books",
+                    loading: false
+                });
             } else {
                 this.setState({
-                    books: res.books
+                    books: res.books,
+                    loading: false
                 });
-                console.log(res); ///////////////////////
             }
         });
     }
 
     render() {
+        let spinner;
+        if (this.state.loading) {
+            spinner = (
+                <div className="spinner-container">
+                    <RefreshIndicator
+                        status="loading"
+                        left={0}
+                        top={0} />
+                </div>
+            );
+        }
+        
         return (
             <div>
                 <Header user={this.props.user} />
                 <AddBookInterface />
                 <div className="mid-page-title">
                     My Books ({this.state.books.length})
+                </div>
+                <div className="middle-message">
+                    {spinner}
+                    {this.state.message}
                 </div>
                 <BooksDisplay
                     books={this.state.books}
@@ -75,23 +96,36 @@ class AddBookInterface extends React.Component {
     sendQuery() {
         this.setState({
             loading: true,
-            timeout: undefined });
-        Ajax.get("/api/books/lookup", {
-            q: this.state.query,
-            o: this.state.queryOffset
-        }, (err, res) => {
-            if (err || res.error) {
-                this.setState({
-                    error: "Sorry, an error occurred",
-                    loading: false
-                });
-            } else {
-                this.setState({
-                    books: res.books,
-                    loading: false
-                });
-            }
+            timeout: undefined,
+            error: ""
         });
+        if (this.state.query) {
+            Ajax.get("/api/books/lookup", {
+                q: this.state.query,
+                o: this.state.queryOffset
+            }, (err, res) => {
+                if (err || res.error) {
+                    this.setState({
+                        error: "Sorry, an error occurred",
+                        loading: false
+                    });
+                } else if (res.books.length === 0) {
+                    this.setState({
+                        error: "No results",
+                        loading: false
+                    });
+                } else {
+                    this.setState({
+                        books: res.books,
+                        loading: false
+                    });
+                }
+            });
+        } else {
+            this.setState({
+                loading: false
+            });
+        }
     }
     
     closeSearch() {
@@ -123,13 +157,22 @@ class AddBookInterface extends React.Component {
                             value={this.state.query}
                             floatingLabelText="Add new book..."
                             id="add-book-field" />
+                        
+                    </div>
+                    {closeButton}
+                    {this.state.error}
+                    <div style={{
+                        position: "relative",
+                        display: "inline-block",
+                        height: "40px",
+                        width: "40px",
+                        marginTop: "1em"
+                    }}>
                         <RefreshIndicator
                             status={(this.state.loading) ? "loading" : "hide"}
                             left={0}
                             top={0} />
                     </div>
-                    {closeButton}
-                    {this.state.error}
                 </div>
                 <BooksDisplay
                     books={this.state.books}

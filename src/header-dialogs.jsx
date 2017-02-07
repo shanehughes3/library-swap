@@ -69,6 +69,24 @@ export class LoginDialog extends React.Component {
                 </span>
             );
         }
+        let buttonOrSpinner;
+        if (this.state.loading) {
+            buttonOrSpinner = (
+                <RefreshIndicator
+                    status="loading"
+                    left={0}
+                    top={0} />
+            );
+        } else {
+            buttonOrSpinner = (
+                <RaisedButton
+                    onTouchTap={this.onSubmit}
+                    label="Log In"
+                    type="submit"
+                    primary />
+            );
+        }
+        
         return (
             <div className="header-dialog">
                 <div className="header-dialog-close">
@@ -100,20 +118,10 @@ export class LoginDialog extends React.Component {
                             name="password"
                             value={this.state.password} />
                     </div>
-                    <div>
-                        <RaisedButton
-                            onTouchTap={this.onSubmit}
-                            label="Log In"
-                            type="submit"
-                            primary />
+                    <div style={{position: "relative", height: "40px"}}>
+                        {buttonOrSpinner}
                     </div>
                 </form>
-                <div style={{position: "relative"}}> {/* TODO fix positioning for spinner */}
-                    <RefreshIndicator
-                        status={(this.state.loading) ? "loading" : "hide"}
-                        left={0}
-                        top={0} />
-                </div>
                 {message}
             </div>
         );
@@ -207,6 +215,24 @@ export class RegisterDialog extends React.Component {
                 </span>
             );
         }
+        let buttonOrSpinner;
+        if (this.state.loading) {
+            buttonOrSpinner = (
+                <RefreshIndicator
+                    status="loading"
+                    left={0}
+                    top={0} />
+            );
+        } else {
+            buttonOrSpinner = (
+                <RaisedButton
+                    onTouchTap={this.onSubmit}
+                    type="submit"
+                    label="Register"
+                    primary />
+            );
+        }
+        
         return (
             <div className="header-dialog">
                 <div className="header-dialog-close">
@@ -245,18 +271,10 @@ export class RegisterDialog extends React.Component {
                             name="confirm"
                             value={this.state.confirm} />
                     </div>
-                    <div>
-                        <RaisedButton
-                            onTouchTap={this.onSubmit}
-                            type="submit"
-                            label="Register"
-                            primary />
+                    <div style={{position: "relative", height: "40px"}}>
+                        {buttonOrSpinner}
                     </div>
                 </form>
-                <RefreshIndicator
-                    status={(this.state.loading) ? "loading" : "hide"}
-                    left={0}
-                    top={0} />
                 {message}
             </div>
         );

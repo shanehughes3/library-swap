@@ -146,18 +146,31 @@ class AddBookButton extends React.Component {
         });
     }
     render() {
-        return (
-            <div>
+        let buttonOrSpinner;
+        if (this.state.loading) {
+            buttonOrSpinner = (
+                <div className="spinner-container">
+                    <RefreshIndicator
+                        status="loading"
+                        left={0}
+                        top={0}
+                />
+                </div>
+            );
+        } else {
+            buttonOrSpinner = (
                 <RaisedButton
-                    onClick={this.addBook}
+                    onTouchTap={this.addBook}
                     primary
                     label="Add Book" />
-                <RefreshIndicator
-                    status={(this.state.loading) ? "loading" : "hide"}
-                    left={0}
-                    top={0}
-                />
-                {this.state.message}
+            );
+        }
+        return (
+            <div>
+                {buttonOrSpinner}
+                <div>
+                    {this.state.message}
+                </div>
             </div>
         );
     }
@@ -200,17 +213,30 @@ class DeleteBookButton extends React.Component {
         });
     }
     render() {
-        return (
-            <div>
+        let buttonOrSpinner;
+        if (this.state.loading) {
+            buttonOrSpinner = (
+                <div className="spinner-container">
+                    <RefreshIndicator
+                        status="loading"
+                        top={0}
+                        left={0} />
+                </div>
+            );
+        } else {
+            buttonOrSpinner = (
                 <RaisedButton
-                    onClick={this.deleteBook}
+                    onTouchTap={this.deleteBook}
                     primary
                     label="Remove Book" />
-                <RefreshIndicator
-                    status={(this.state.loading) ? "loading" : "hide"}
-                    top={0}
-                    left={0} />
-                {this.state.message}
+            );
+        }
+        return (
+            <div>
+                {buttonOrSpinner}
+                <div>
+                    {this.state.message}
+                </div>
             </div>
         );
     }
@@ -305,7 +331,7 @@ class RequestBookButton extends React.Component {
         return (
             <div>
                 <RaisedButton
-                    onClick={this.handleOpenDialog}
+                    onTouchTap={this.handleOpenDialog}
                     primary
                     label="Request Book" />
                 <Dialog
@@ -324,11 +350,11 @@ class RequestBookButton extends React.Component {
                             {options}
                         </SelectField>
                         <RaisedButton
-                            onClick={this.handleSubmit}
+                            onTouchTap={this.handleSubmit}
                             primary
                             label="Request" />
                         <RaisedButton
-                            onClick={this.handleCloseDialog}
+                            onTouchTap={this.handleCloseDialog}
                             label="Cancel" />
                         {this.state.message}
                     </div>

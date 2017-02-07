@@ -10,6 +10,12 @@ a {
     text-decoration: none;
     color: rgba(0,0,0,0.87);
 }
+.spinner-container {
+    position: relative;
+    height: 40px;
+    width: 40px;
+    margin: auto;
+}
 
 /*
  * HEADER
@@ -72,8 +78,11 @@ a {
     margin: auto;
     text-align: center;
 }
+.cards-container > div {
+    vertical-align: bottom;
+}
 .search-controls {
-    overflow: auto;
+    overflow: hidden;
     margin: 0;
 }
 .add-book-search > div {

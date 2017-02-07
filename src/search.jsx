@@ -73,7 +73,7 @@ class LatestBooks extends React.Component {
             this.state.error === "") {
             // spinner before initial list load only
             spinner = (
-                <div style={{position: "relative"}}>
+                <div className="spinner-container">
                     <RefreshIndicator
                         status="loading"
                         left={0}
@@ -177,7 +177,7 @@ class SearchBooks extends React.Component {
 
         if (this.state.loading) {
             spinner = (
-                <div style={{position: "relative"}}>
+                <div className="spinner-container">
                     <RefreshIndicator
                         status="loading"
                         left={0}
