@@ -21743,7 +21743,23 @@
 	                            _react2.default.createElement(
 	                                "span",
 	                                { id: "menu-word" },
-	                                this.props.user
+	                                this.props.user,
+	                                _react2.default.createElement(
+	                                    _materialUi.FontIcon,
+	                                    { className: "material-icons" },
+	                                    "arrow_drop_down"
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                "span",
+	                                { id: "menu-icon" },
+	                                _react2.default.createElement(
+	                                    _materialUi.FontIcon,
+	                                    {
+	                                        className: "material-icons"
+	                                    },
+	                                    "menu"
+	                                )
 	                            )
 	                        )
 	                    ),

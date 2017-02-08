@@ -1,6 +1,6 @@
 import React from "react";
 import {LoginDialog, RegisterDialog} from "./header-dialogs.jsx";
-import {Menu, MenuItem, Popover, Badge} from "material-ui";
+import {Menu, MenuItem, Popover, Badge, FontIcon} from "material-ui";
 import {Ajax} from "./ajax";
 
 export class Header extends React.Component {
@@ -81,6 +81,16 @@ export class Header extends React.Component {
                             primary >
                             <span id="menu-word">
                                 {this.props.user}
+                                <FontIcon className="material-icons">
+                                    arrow_drop_down
+                                </FontIcon>
+                            </span>
+                            <span id="menu-icon">
+                                <FontIcon
+                                    className="material-icons"
+                                >
+                                    menu
+                                </FontIcon>
                             </span>
                         </Badge>
                     </span>

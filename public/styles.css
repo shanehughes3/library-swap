@@ -25,7 +25,7 @@ a {
     font-family: "Cormorant Garamond", serif;
     line-height: 21px;
     color: black;
-    font-size: 50px;
+    font-size: 3em;
     position: relative;
     border-bottom: 10px solid rgb(229,57,53);
     padding-bottom: 5px;
@@ -38,6 +38,9 @@ a {
 }
 #name-and-logo {
     padding: 5px;
+}
+#menu-icon {
+    display: none;
 }
 .header-button {
     float: right;
@@ -234,4 +237,16 @@ a {
 }
 #footer > div > a:hover {
     text-decoration: underline;
+}
+
+@media only screen and (max-width : 550px) {
+    #menu-word {
+        display: none;
+    }
+    #menu-icon {
+        display: inline-block;
+    }
+    #site-name {
+        font-size: 0.66em;
+    }
 }
