@@ -21731,12 +21731,20 @@
 	                            _materialUi.Badge,
 	                            {
 	                                badgeStyle: {
+	                                    fontFamily: "sans-serif",
+	                                    fontWeight: "bold",
 	                                    padding: 0,
+	                                    top: "-15px",
+	                                    right: "-15px",
 	                                    visibility: this.state.unreadCount > 0 ? "visible" : "hidden"
 	                                },
 	                                badgeContent: this.state.unreadCount || 0,
 	                                primary: true },
-	                            this.props.user
+	                            _react2.default.createElement(
+	                                "span",
+	                                { id: "menu-word" },
+	                                this.props.user
+	                            )
 	                        )
 	                    ),
 	                    _react2.default.createElement(
