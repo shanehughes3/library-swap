@@ -44,6 +44,33 @@ export class BooksDisplay extends React.Component {
             published = book.publishedYear;
         }
 
+        let location = "";
+        if (book.User) {
+            if (book.User.city) {
+                location += book.User.city;
+            }
+            if (book.User.state) {
+                if (location) {
+                    location += ", ";
+                }
+                location += book.User.state;
+            }
+            if (book.User.country) {
+                if (location) {
+                    location += ", ";
+                }
+                location += book.User.country;
+            }
+            if (location) {
+                location = (
+                    <span>
+                        <br />
+                        <b>Location: </b>{location}
+                    </span>
+                );
+            }
+        }
+        
         return (
             <span>
                 <b>Title: </b>{book.title || ""}<br />
@@ -52,6 +79,7 @@ export class BooksDisplay extends React.Component {
             <b>Published: </b>{published}<br />
             <b>Publisher: </b>{book.publisher || ""}<br />
             <b>Pages: </b>{book.pageCount || book.pages || ""}
+            {location}
             </span>
         );
     }

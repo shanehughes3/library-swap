@@ -62049,6 +62049,38 @@
 	                published = book.publishedYear;
 	            }
 
+	            var location = "";
+	            if (book.User) {
+	                if (book.User.city) {
+	                    location += book.User.city;
+	                }
+	                if (book.User.state) {
+	                    if (location) {
+	                        location += ", ";
+	                    }
+	                    location += book.User.state;
+	                }
+	                if (book.User.country) {
+	                    if (location) {
+	                        location += ", ";
+	                    }
+	                    location += book.User.country;
+	                }
+	                if (location) {
+	                    location = _react2.default.createElement(
+	                        "span",
+	                        null,
+	                        _react2.default.createElement("br", null),
+	                        _react2.default.createElement(
+	                            "b",
+	                            null,
+	                            "Location: "
+	                        ),
+	                        location
+	                    );
+	                }
+	            }
+
 	            return _react2.default.createElement(
 	                "span",
 	                null,
@@ -62092,7 +62124,8 @@
 	                    null,
 	                    "Pages: "
 	                ),
-	                book.pageCount || book.pages || ""
+	                book.pageCount || book.pages || "",
+	                location
 	            );
 	        }
 	    }, {

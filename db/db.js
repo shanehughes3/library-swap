@@ -90,7 +90,12 @@ exports.getLatestBooks = function(offset, userId, cb) {
                 $ne: userId
             }
         },
-        limit: 15
+        limit: 15,
+        include: [{
+            model: User,
+            as: "User",
+            attributes: ["city", "state", "country"]
+        }]
     }).then(function(books) {
         cb(null, books);
     }).catch(function(err) {
