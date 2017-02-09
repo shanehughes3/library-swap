@@ -20,7 +20,7 @@ module.exports = {
                 loader: "style-loader!css-loader!sass-loader"
             }
         ]
-    },/*
+    },
     plugins: [
         new webpack.optimize.UglifyJsPlugin({
             compress: {
@@ -30,5 +30,5 @@ module.exports = {
                 comments: false
             }
         })
-    ] */
+    ] 
 };
