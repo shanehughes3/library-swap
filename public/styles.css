@@ -277,5 +277,28 @@ a {
     .header-button {
         font-size: 20px;
     }
-    
+
+    .requests-side-menu {
+        display: block;
+        width: 100%;
+    }
+    .requests-side-menu-item {
+        text-align: center;
+        border-bottom: 1px solid black;
+        border-right: none;
+        display: inline-block;
+        width: 33%;
+        margin: 0;
+        padding: 0;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    .requests-side-menu-item-active {
+        border-bottom: 3px solid rgb(229,57,53);
+        border-right: none;
+    }
+    .requests-main-window {
+        display: block;
+        width: 95%;
+    }
 }
