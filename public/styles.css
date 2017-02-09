@@ -231,6 +231,17 @@ a {
     padding-top: 1em;
 }
 
+/*
+ * PROFILE
+ */
+
+.profile-container {
+    padding: 1em;
+}
+.profile-form-row > div {
+    margin: 1em;
+}
+
 /* 
  * FOOTER
  */

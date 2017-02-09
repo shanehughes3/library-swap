@@ -105,10 +105,15 @@ export class Header extends React.Component {
                             <a href="/requests">
                                 <MenuItem>Inbox</MenuItem>
                             </a>
+                            <a href="/">
+                                <MenuItem>Search/Browse</MenuItem>
+                            </a>
                             <a href="/books">
                                 <MenuItem>My Books</MenuItem>
                             </a>
-                            <MenuItem>Profile</MenuItem>
+                            <a href="/profile">
+                                <MenuItem>Profile</MenuItem>
+                            </a>
                             <a href="/logout">
                                 <MenuItem>Log Out</MenuItem>
                             </a>

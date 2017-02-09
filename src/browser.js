@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import {Index} from "./index.jsx";
 import {Books} from "./books.jsx";
 import {Requests} from "./requests.jsx";
+import {Profile} from "./profile.jsx";
 import injectTapEventPlugin from "react-tap-event-plugin";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import {red600} from "material-ui/styles/colors";
@@ -15,7 +16,8 @@ injectTapEventPlugin();
 const apps = {
     "home-app": Index,
     "my-books": Books,
-    "requests": Requests
+    "requests": Requests,
+    "profile": Profile
 };
 
 const muiTheme = getMuiTheme({

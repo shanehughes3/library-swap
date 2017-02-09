@@ -60,6 +60,8 @@
 
 	var _requests = __webpack_require__(554);
 
+	var _profile = __webpack_require__(616);
+
 	var _reactTapEventPlugin = __webpack_require__(555);
 
 	var _reactTapEventPlugin2 = _interopRequireDefault(_reactTapEventPlugin);
@@ -81,7 +83,8 @@
 	var apps = {
 	    "home-app": _index.Index,
 	    "my-books": _books.Books,
-	    "requests": _requests.Requests
+	    "requests": _requests.Requests,
+	    "profile": _profile.Profile
 	};
 
 	var muiTheme = (0, _getMuiTheme2.default)({
@@ -21786,6 +21789,15 @@
 	                            ),
 	                            _react2.default.createElement(
 	                                "a",
+	                                { href: "/" },
+	                                _react2.default.createElement(
+	                                    _materialUi.MenuItem,
+	                                    null,
+	                                    "Search/Browse"
+	                                )
+	                            ),
+	                            _react2.default.createElement(
+	                                "a",
 	                                { href: "/books" },
 	                                _react2.default.createElement(
 	                                    _materialUi.MenuItem,
@@ -21794,9 +21806,13 @@
 	                                )
 	                            ),
 	                            _react2.default.createElement(
-	                                _materialUi.MenuItem,
-	                                null,
-	                                "Profile"
+	                                "a",
+	                                { href: "/profile" },
+	                                _react2.default.createElement(
+	                                    _materialUi.MenuItem,
+	                                    null,
+	                                    "Profile"
+	                                )
 	                            ),
 	                            _react2.default.createElement(
 	                                "a",
@@ -22113,7 +22129,7 @@
 	                                loading: false,
 	                                message: "Success!"
 	                            });
-	                            window.location.reload(true);
+	                            window.location.href = "/profile";
 	                        }
 	                    }
 	                });
@@ -69059,6 +69075,220 @@
 	        )
 	    );
 	};
+
+/***/ },
+/* 616 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Profile = undefined;
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _ajax = __webpack_require__(549);
+
+	var _header = __webpack_require__(179);
+
+	var _footer = __webpack_require__(615);
+
+	var _materialUi = __webpack_require__(181);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Profile = exports.Profile = function (_React$Component) {
+	    _inherits(Profile, _React$Component);
+
+	    function Profile() {
+	        _classCallCheck(this, Profile);
+
+	        return _possibleConstructorReturn(this, (Profile.__proto__ || Object.getPrototypeOf(Profile)).call(this));
+	    }
+
+	    _createClass(Profile, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                null,
+	                _react2.default.createElement(_header.Header, { user: this.props.user }),
+	                _react2.default.createElement(ProfileInterface, null),
+	                _react2.default.createElement(_footer.Footer, null)
+	            );
+	        }
+	    }]);
+
+	    return Profile;
+	}(_react2.default.Component);
+
+	var ProfileInterface = function (_React$Component2) {
+	    _inherits(ProfileInterface, _React$Component2);
+
+	    function ProfileInterface() {
+	        _classCallCheck(this, ProfileInterface);
+
+	        var _this2 = _possibleConstructorReturn(this, (ProfileInterface.__proto__ || Object.getPrototypeOf(ProfileInterface)).call(this));
+
+	        _this2.state = {
+	            firstName: "",
+	            lastName: "",
+	            city: "",
+	            state: "",
+	            country: "",
+	            loading: false,
+	            message: ""
+	        };
+	        _this2.onSubmit = _this2.onSubmit.bind(_this2);
+	        _this2.handleChange = _this2.handleChange.bind(_this2);
+	        return _this2;
+	    }
+
+	    _createClass(ProfileInterface, [{
+	        key: "componentWillMount",
+	        value: function componentWillMount() {
+	            var _this3 = this;
+
+	            _ajax.Ajax.get("/api/profile", function (err, response) {
+	                if (err || response.error) {
+	                    _this3.setState({ message: "Sorry, an error occurred" });
+	                } else {
+	                    _this3.setState({
+	                        firstName: response.firstName || "",
+	                        lastName: response.lastName || "",
+	                        city: response.city || "",
+	                        state: response.state || "",
+	                        country: response.country || ""
+	                    });
+	                }
+	            });
+	        }
+	    }, {
+	        key: "onSubmit",
+	        value: function onSubmit() {
+	            var _this4 = this;
+
+	            this.setState({
+	                loading: true,
+	                message: ""
+	            });
+	            var _state = this.state,
+	                firstName = _state.firstName,
+	                lastName = _state.lastName,
+	                city = _state.city,
+	                state = _state.state,
+	                country = _state.country;
+
+
+	            _ajax.Ajax.put("/api/profile", { firstName: firstName, lastName: lastName, city: city, state: state, country: country }, function (err, response) {
+	                if (err || response.error) {
+	                    _this4.setState({
+	                        loading: false,
+	                        message: "Sorry, an error occurred"
+	                    });
+	                } else {
+	                    _this4.setState({
+	                        loading: false,
+	                        message: "Successfully updated"
+	                    });
+	                }
+	            });
+	        }
+	    }, {
+	        key: "handleChange",
+	        value: function handleChange(e) {
+	            this.setState(_defineProperty({}, e.target.name, e.target.value));
+	        }
+	    }, {
+	        key: "render",
+	        value: function render() {
+	            var buttonOrSpinner = void 0;
+	            if (this.state.loading) {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RefreshIndicator, {
+	                    status: "loading",
+	                    left: 0,
+	                    top: 0 });
+	            } else {
+	                buttonOrSpinner = _react2.default.createElement(_materialUi.RaisedButton, {
+	                    onTouchTap: this.onSubmit,
+	                    label: "Save",
+	                    type: "submit",
+	                    primary: true });
+	            }
+	            return _react2.default.createElement(
+	                "div",
+	                { className: "profile-container" },
+	                _react2.default.createElement(
+	                    "form",
+	                    {
+	                        action: "javascript:void(0)",
+	                        onSubmit: this.onSubmit },
+	                    _react2.default.createElement(
+	                        "div",
+	                        { className: "profile-form-row" },
+	                        _react2.default.createElement(_materialUi.TextField, {
+	                            onChange: this.handleChange,
+	                            floatingLabelText: "First Name",
+	                            id: "firstname-field",
+	                            name: "firstName",
+	                            value: this.state.firstName,
+	                            autoFocus: true }),
+	                        _react2.default.createElement(_materialUi.TextField, {
+	                            onChange: this.handleChange,
+	                            floatingLabelText: "Last Name",
+	                            id: "lastname-field",
+	                            name: "lastName",
+	                            value: this.state.lastName })
+	                    ),
+	                    _react2.default.createElement(
+	                        "div",
+	                        { className: "profile-form-row" },
+	                        _react2.default.createElement(_materialUi.TextField, {
+	                            onChange: this.handleChange,
+	                            floatingLabelText: "City",
+	                            id: "city-field",
+	                            name: "city",
+	                            value: this.state.city }),
+	                        _react2.default.createElement(_materialUi.TextField, {
+	                            onChange: this.handleChange,
+	                            floatingLabelText: "State/Province",
+	                            id: "state-field",
+	                            name: "state",
+	                            value: this.state.state }),
+	                        _react2.default.createElement(_materialUi.TextField, {
+	                            onChange: this.handleChange,
+	                            floatingLabelText: "Country",
+	                            id: "country-field",
+	                            name: "country",
+	                            value: this.state.country })
+	                    ),
+	                    _react2.default.createElement(
+	                        "div",
+	                        { style: { position: "relative", height: "40px" } },
+	                        buttonOrSpinner,
+	                        this.state.message
+	                    )
+	                )
+	            );
+	        }
+	    }]);
+
+	    return ProfileInterface;
+	}(_react2.default.Component);
 
 /***/ }
 /******/ ]);

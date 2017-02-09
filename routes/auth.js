@@ -74,6 +74,53 @@ function parseUnreadData(data) {
     return data;
 }
 
+router.get("/profile", function(req, res) {
+    if (req.user) {
+        res.render("profile", {user: req.user.username});
+    } else {
+        res.redirect("/");
+    }
+});
+
+router.get("/api/profile", function(req, res) {
+    if (req.user) {
+        db.getUserInfo(req.user.id, (err, info) => {
+            if (err) {
+                console.error(err);
+                res.json({error: "Sorry, an error occurred"});
+            } else {
+                res.json(info || {});
+            }
+        });
+    } else {
+        res.json({error: "Unauthorized"});
+    }
+});
+
+router.put("/api/profile", function(req, res) {
+    if (req.user && req.body) {
+        db.updateUserInfo(
+            req.user.id,
+            {
+                firstName: req.body.firstName || "",
+                lastName: req.body.lastName || "",
+                city: req.body.city || "",
+                state: req.body.state || "",
+                country: req.body.country || ""
+            },
+            (err) => {
+                if (err) {
+                    console.error(err);
+                    res.json({error: "Sorry, an error occurred"});
+                } else {
+                    res.json({success: true});
+                }
+            });
+    } else {
+        res.json({error: "Unauthorized"});
+    }
+});
+
 router.get("/logout", function(req, res) {
     req.logout();
     res.redirect("/");

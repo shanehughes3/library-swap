@@ -11,7 +11,13 @@ const db = new Sequelize("library_swap", config.dbUser, config.dbPass, {
 /* USER/AUTH
  */
 
-const User = passportLocalSequelize.defineUser(db, {});
+const User = passportLocalSequelize.defineUser(db, {
+    firstName: Sequelize.STRING,
+    lastName: Sequelize.STRING,
+    city: Sequelize.STRING,
+    state: Sequelize.STRING,
+    country: Sequelize.STRING
+});
 
 passportLocalSequelize.attachToUser(User, {
     keylen: 125   // fixes passport-local-sequelize bug (issue #21)
@@ -21,7 +27,35 @@ exports.user = User;
 
 exports.register = function(username, password, cb) {
     User.register(username, password, cb);
-}
+};
+
+exports.getUserInfo = function(userId, cb) {
+    User.findById(userId, {
+        attributes: ["firstName", "lastName", "city", "state", "country"]
+    })
+        .then((user) => {
+            cb(null, user);
+        })
+        .catch((err) => cb(err));
+        
+};
+
+exports.updateUserInfo = function(userId, newFields, cb) {
+    User.findById(userId)
+        .then((user) => {
+            user.update({
+                firstName: newFields.firstName,
+                lastName: newFields.lastName,
+                city: newFields.city,
+                state: newFields.state,
+                country: newFields.country
+            })
+                .then(() => cb(null))
+                .catch((err) => cb(err));
+        })
+        .catch((err) => cb(err));
+};
+
     
 /* BOOKS
  */

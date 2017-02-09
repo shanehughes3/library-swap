@@ -170,7 +170,7 @@ export class RegisterDialog extends React.Component {
                             loading: false,
                             message: "Success!"
                         });
-                        window.location.reload(true);
+                        window.location.href = "/profile";
                     }
                 }
             });
