@@ -21717,6 +21717,8 @@
 	        key: "render",
 	        value: function render() {
 	            var buttons = "";
+
+	            // logged-in nav
 	            if (this.props.user) {
 	                buttons = _react2.default.createElement(
 	                    "span",
@@ -21756,8 +21758,7 @@
 	                                _react2.default.createElement(
 	                                    _materialUi.FontIcon,
 	                                    {
-	                                        className: "material-icons"
-	                                    },
+	                                        className: "material-icons" },
 	                                    "menu"
 	                                )
 	                            )
@@ -21809,16 +21810,22 @@
 	                        )
 	                    )
 	                );
+
+	                // anon nav
 	            } else {
 	                buttons = _react2.default.createElement(
 	                    "span",
 	                    null,
-	                    _react2.default.createElement(HeaderButton, {
-	                        text: "Register",
-	                        onClick: this.openDialog }),
-	                    _react2.default.createElement(HeaderButton, {
-	                        text: "Log In",
-	                        onClick: this.openDialog })
+	                    _react2.default.createElement(
+	                        "div",
+	                        { id: "anon-menu" },
+	                        _react2.default.createElement(HeaderButton, {
+	                            text: "Register",
+	                            onClick: this.openDialog }),
+	                        _react2.default.createElement(HeaderButton, {
+	                            text: "Log In",
+	                            onClick: this.openDialog })
+	                    )
 	                );
 	            }
 

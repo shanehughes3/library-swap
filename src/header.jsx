@@ -58,6 +58,8 @@ export class Header extends React.Component {
 
     render() {
 	let buttons = "";
+
+        // logged-in nav
         if (this.props.user) {
             buttons = (
                 <span style={{position: "relative"}}>
@@ -87,8 +89,7 @@ export class Header extends React.Component {
                             </span>
                             <span id="menu-icon">
                                 <FontIcon
-                                    className="material-icons"
-                                >
+                                    className="material-icons" >
                                     menu
                                 </FontIcon>
                             </span>
@@ -115,15 +116,19 @@ export class Header extends React.Component {
                     </Popover>
                 </span>
             );
+
+        // anon nav
         } else {
 	    buttons = (
                 <span>
-		    <HeaderButton
-		        text="Register"
-		        onClick={this.openDialog} />
-		    <HeaderButton
-		        text="Log In"
-		        onClick={this.openDialog} />
+                    <div id="anon-menu">
+		        <HeaderButton
+		            text="Register"
+		            onClick={this.openDialog} />
+		        <HeaderButton
+		            text="Log In"
+		            onClick={this.openDialog} />
+                    </div>
                 </span>
 	    );
 	} 
